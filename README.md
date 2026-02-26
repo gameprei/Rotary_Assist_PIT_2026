@@ -21,11 +21,6 @@ agendamento, empréstimo, devolução, renovação, entrada e baixa de patrimôn
 
 **rotary-backend** – API e banco de dados, desenvolvidos em Node.js, Express e MySQL.
 
-**Declaração_Projeto_Web.pdf** – Declaração assinada pelo responsável do Rotary.
-
-**ERS Rotary.pdf** – Documento de Especificação de Requisitos produzido ao longo do semestre.
-
-**Video_apresentação.mkv ** Video de apresentação das funções implementadas.
 
 
 
