@@ -1,10 +1,12 @@
 # Grupo 7
 
-Gabriela Vieira Cavacini Venerato – RA: 1048242970
-
 Matheus Andrade Emidio – RA: 1048242968
 
 Luiz Henrique da Silva Garcia – RA: 10482428872
+
+Guilherme de Matos Russo - RA: 10482613585
+
+Cauã Silva Macedo - RA: 10482613941
 
 # Rotary Assist – Sistema de Gerenciamento de Patrimônio de Equipamentos de Mobilidade
 
