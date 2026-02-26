@@ -1,0 +1,14 @@
+.btn-secondary {
+  background: linear-gradient(#a00101);
+  border: none;
+  color: white;
+  padding: 12px 20px;
+  border-radius: 8px;
+  font-size: 1rem;
+  cursor: pointer;
+  transition: transform 0.2s ease;
+}
+
+.btn-secondary:hover {
+  transform: translateY(-2px);
+}
