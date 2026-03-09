@@ -174,3 +174,51 @@ INSERT INTO membros (
 ('LEONARDO BARROS', '01234567890', '147258369', 'leonardo.b@email.com', '11911009988',
  '1989-08-14', '2023-04-01', 'Rua Oscar Freire, 900', 'Jardins', 'São Paulo', 'SP', '01426000',
  'Coordenador', 'Designer', 'StudioX');
+
+ CREATE TABLE IF NOT EXISTS fornecedores (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    tipo_pessoa ENUM('PF','PJ') NOT NULL,
+    nome VARCHAR(150) NOT NULL,
+    cpf VARCHAR(14) UNIQUE,
+    cnpj VARCHAR(18) UNIQUE,
+    tipo_fornecedor ENUM(
+        'MANUTENCAO',
+        'VENDA_EQUIPAMENTO',
+        'VENDA_PECA',
+        'MULTISERVICO'
+    ) NOT NULL,
+    telefone VARCHAR(20),
+    email VARCHAR(150),
+    endereco VARCHAR(255),
+    status ENUM('ATIVO','INATIVO') DEFAULT 'ATIVO',
+    data_cadastro TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+-- Fornecedores Pessoa Jurídica (Empresas especializadas em equipamentos de mobilidade)
+INSERT INTO fornecedores (tipo_pessoa, nome, cnpj, tipo_fornecedor, telefone, email, endereco, status) VALUES
+('PJ', 'Free Wheelchair Mission Brasil', '12.345.678/0001-90', 'VENDA_EQUIPAMENTO', '(11) 3456-7890', 'contato@fwmission.org.br', 'Av. Paulista, 1000 - São Paulo, SP', 'ATIVO'),
+('PJ', 'Mobility Life Equipamentos', '23.456.789/0001-01', 'MULTISERVICO', '(11) 4567-8901', 'vendas@mobilitylife.com.br', 'Rua da Acessibilidade, 500 - São Paulo, SP', 'ATIVO'),
+('PJ', 'Orthopeb Ortopedia Técnica', '34.567.890/0001-12', 'VENDA_EQUIPAMENTO', '(19) 5678-9012', 'comercial@orthopeb.com.br', 'Av. Brasil, 200 - Campinas, SP', 'ATIVO'),
+('PJ', 'Assistech Manutenção de Cadeiras de Rodas', '45.678.901/0001-23', 'MANUTENCAO', '(11) 6789-0123', 'assistencia@assistech.com.br', 'Rua dos Técnicos, 300 - São Paulo, SP', 'ATIVO'),
+('PJ', 'Peças para Reabilitação Ltda', '56.789.012/0001-34', 'VENDA_PECA', '(21) 7890-1234', 'pecas@reabilitacao.com.br', 'Av. Rio Branco, 150 - Rio de Janeiro, RJ', 'ATIVO'),
+('PJ', 'Medical Mobilis Distribuidora', '67.890.123/0001-45', 'VENDA_EQUIPAMENTO', '(31) 8901-2345', 'contato@medicalmobilis.com.br', 'Av. Amazonas, 800 - Belo Horizonte, MG', 'INATIVO'),
+('PJ', 'Ortocenter Peças e Acessórios', '78.901.234/0001-56', 'VENDA_PECA', '(41) 9012-3456', 'vendas@ortocenter.com.br', 'Rua das Oficinas, 450 - Curitiba, PR', 'ATIVO'),
+('PJ', 'Global Mobility Solutions', '89.012.345/0001-67', 'MULTISERVICO', '(51) 0123-4567', 'atendimento@globalmobility.com.br', 'Av. Ipiranga, 600 - Porto Alegre, RS', 'ATIVO');
+
+-- Fornecedores Pessoa Física (Técnicos especializados e pequenos prestadores)
+INSERT INTO fornecedores (tipo_pessoa, nome, cpf, tipo_fornecedor, telefone, email, endereco, status) VALUES
+('PF', 'João Batista de Oliveira', '123.456.789-01', 'MANUTENCAO', '(11) 91234-5678', 'tecnico.joao@email.com', 'Rua das Flores, 123 - São Paulo, SP', 'ATIVO'),
+('PF', 'Márcio Antunes da Silva', '234.567.890-12', 'VENDA_EQUIPAMENTO', '(11) 92345-6789', 'marcio.equipamentos@email.com', 'Av. Brasil, 456 - São Paulo, SP', 'ATIVO'),
+('PF', 'Roberto Carlos Ferreira', '345.678.901-23', 'VENDA_PECA', '(19) 93456-7890', 'roberto.pecas@email.com', 'Rua XV de Novembro, 789 - Campinas, SP', 'INATIVO'),
+('PF', 'Maria Aparecida Costa', '456.789.012-34', 'MULTISERVICO', '(21) 94567-8901', 'maria.servicos@email.com', 'Rua da Praia, 234 - Rio de Janeiro, RJ', 'ATIVO'),
+('PF', 'José Renato Souza', '567.890.123-45', 'MANUTENCAO', '(31) 95678-9012', 'jose.manutencao@email.com', 'Av. Afonso Pena, 567 - Belo Horizonte, MG', 'ATIVO'),
+('PF', 'Fernanda Cristina Lima', '678.901.234-56', 'VENDA_EQUIPAMENTO', '(41) 96789-0123', 'fernanda.mobilidade@email.com', 'Rua das Araucárias, 890 - Curitiba, PR', 'ATIVO'),
+('PF', 'Ricardo de Almeida', '789.012.345-67', 'VENDA_PECA', '(51) 97890-1234', 'ricardo.almeida@email.com', 'Av. Goethe, 123 - Porto Alegre, RS', 'ATIVO'),
+('PF', 'Patrícia Gomes Ferreira', '890.123.456-78', 'MULTISERVICO', '(61) 98901-2345', 'patricia.reabilitacao@email.com', 'SHS Quadra 6, Bloco C - Brasília, DF', 'ATIVO');
+
+-- Fornecedores adicionais especializados (ortopedia técnica e reabilitação)
+INSERT INTO fornecedores (tipo_pessoa, nome, cnpj, tipo_fornecedor, telefone, email, endereco, status) VALUES
+('PJ', 'Tecno Mobility Indústria e Comércio', '90.123.456/0001-78', 'VENDA_EQUIPAMENTO', '(11) 99876-5432', 'comercial@tecnomobility.com.br', 'Rua da Indústria, 150 - São Paulo, SP', 'ATIVO'),
+('PJ', 'Ortoponto Produtos Ortopédicos', '01.234.567/0001-89', 'VENDA_PECA', '(11) 98765-4321', 'vendas@ortoponto.com.br', 'Av. das Nações, 750 - São Paulo, SP', 'ATIVO'),
+('PJ', 'Adapta Equipamentos sob Medida', '98.765.432/0001-10', 'MULTISERVICO', '(16) 97654-3210', 'contato@adaptaequipamentos.com.br', 'Rodovia Anhanguera, km 300 - Ribeirão Preto, SP', 'INATIVO'),
+('PJ', 'Reabilitar Técnica em Manutenção', '87.654.321/0001-98', 'MANUTENCAO', '(19) 96543-2109', 'os@reabilitartecnica.com.br', 'Av. Francisco Glicério, 400 - Campinas, SP', 'ATIVO');
