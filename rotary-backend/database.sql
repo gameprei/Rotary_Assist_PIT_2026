@@ -228,3 +228,23 @@ INSERT INTO fornecedores (tipo_pessoa, nome, cnpj, telefone, email, endereco, ba
 ('PJ', 'Ortoponto Produtos Ortopédicos', '22.333.444/0001-55', '(11) 94444-5678', 'vendas@ortoponto.com.br', 'Av. das Nações, 750', 'Vila Olímpia', 'São Paulo', 'SP', '04555000', 'ATIVO'),
 ('PJ', 'Adapta Equipamentos sob Medida', '33.444.555/0001-66', '(16) 93333-8901', 'contato@adaptaequipamentos.com.br', 'Rodovia Anhanguera, km 300', 'Jardim Canadá', 'Ribeirão Preto', 'SP', '14090000', 'INATIVO'),
 ('PJ', 'Reabilitar Técnica em Manutenção', '44.555.666/0001-77', '(19) 92222-3456', 'os@reabilitartecnica.com.br', 'Av. Dr. Antônio Carlos Couto de Barros, 890', 'Parque Industrial', 'Campinas', 'SP', '13069900', 'ATIVO');
+
+CREATE TABLE IF NOT EXISTS categorias (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    nome VARCHAR(100) NOT NULL,
+    tipo VARCHAR(50) NOT NULL,
+    descricao TEXT,
+    status ENUM('ATIVO','INATIVO') DEFAULT 'ATIVO',
+    data_criacao TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    UNIQUE (nome, tipo)
+);
+
+INSERT INTO categorias (nome, tipo, descricao) VALUES
+('Cadeira de rodas', 'EQUIPAMENTO', 'Equipamento de mobilidade'),
+('Cadeira de banho', 'EQUIPAMENTO', 'Equipamento para higiene'),
+('Muleta', 'EQUIPAMENTO', 'Auxílio para locomoção'),
+('Andador', 'EQUIPAMENTO', 'Suporte para caminhar'),
+('Cama hospitalar', 'EQUIPAMENTO', 'Cama ajustável para pacientes'),
+('Manutenção de equipamentos', 'FORNECEDOR', 'Fornecedor que realiza manutenção'),
+('Venda de equipamentos', 'FORNECEDOR', 'Fornecedor que vende equipamentos médicos'),
+('Venda de peças', 'FORNECEDOR', 'Fornecedor especializado em peças de reposição');
