@@ -161,6 +161,33 @@ class EquipamentoController {
 
     }
   }
+
+  // Atualizar status do equipamento
+  static async atualizarStatus(req, res) {
+    try {
+
+      const { id } = req.params;
+      const { status } = req.body;
+
+      if (!status) {
+        return res.status(400).json({ message: "Status é obrigatório" });
+      }
+
+      if (!["DISPONIVEL", "EMPRESTADO", "MANUTENCAO", "BAIXADO"].includes(status)) {
+        return res.status(400).json({ message: "Status inválido!" });
+      }
+
+      const equipamentoAtualizado = await EquipamentoModel.atualizarStatus(id, status);
+
+      res.json(equipamentoAtualizado);
+
+    } catch (error) {
+
+      console.error("Erro ao atualizar status do equipamento:", error);
+      res.status(500).json({ message: "Erro ao atualizar status do equipamento" });
+
+    }
+  }
 }
 
 export default EquipamentoController;
