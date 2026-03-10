@@ -7,17 +7,17 @@ class FornecedorModel {
             "SELECT * FROM fornecedores ORDER BY nome"
         );
         return rows;
-    } 
+    }
 
-    // Buscar fornecedores por cnpj || nome || cpf
+    // Buscar fornecedores por cnpj || nome || cpf || id
     static async buscarPorTermo(termo) {
         const query = `
             SELECT * FROM fornecedores
-            WHERE nome LIKE ? OR cnpj LIKE ? OR cpf LIKE ?
+            WHERE nome LIKE ? OR cnpj LIKE ? OR cpf LIKE ? OR id = ?
             ORDER BY nome
         `;
         const likeTermo = `%${termo}%`;
-        const [rows] = await pool.query(query, [likeTermo, likeTermo, likeTermo]);
+        const [rows] = await pool.query(query, [likeTermo, likeTermo, likeTermo, termo]);
         return rows;
     }
 
@@ -28,7 +28,6 @@ class FornecedorModel {
             nome,
             cpf,
             cnpj,
-            tipo_fornecedor,
             telefone,
             email,
             endereco,
@@ -36,20 +35,18 @@ class FornecedorModel {
             cidade,
             uf,
             cep,
-            status,
-            data_cadastro,
+            status
         } = fornecedor;
 
         const [result] = await pool.query(
             `INSERT INTO fornecedores 
-                (tipo_pessoa, nome, cpf, cnpj, tipo_fornecedor, telefone, email, endereco, bairro, cidade, uf, cep, status, data_cadastro) 
-                VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+                (tipo_pessoa, nome, cpf, cnpj, telefone, email, endereco, bairro, cidade, uf, cep, status) 
+                VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
             [
                 tipo_pessoa,
                 nome,
                 cpf,
                 cnpj,
-                tipo_fornecedor,
                 telefone,
                 email,
                 endereco,
@@ -57,13 +54,15 @@ class FornecedorModel {
                 cidade,
                 uf,
                 cep,
-                status,
-                data_cadastro,
+                status
             ]
         );
-        return { id: result.insertId, ...fornecedor };
-}
-    
+        return {
+            id: result.insertId, ...fornecedor
+        };
+
+    }
+
     // Atualizar fornecedor
     static async atualizar(id, fornecedor) {
         if (!fornecedor || Object.keys(fornecedor).length === 0) {
@@ -80,7 +79,7 @@ class FornecedorModel {
     }
 
     // Deletar fornecedor
-    static async deletar(id) {
+    static async excluir(id) {
         const [result] = await pool.query(
             `DELETE FROM fornecedores WHERE id = ?`,
             [id]
@@ -88,7 +87,7 @@ class FornecedorModel {
         if (result.affectedRows === 0) {
             throw new Error("Fornecedor não encontrado");
         }
-        return { message: "Fornecedor deletado com sucesso" };
+        return { message: "Fornecedor excluído com sucesso" };
     }
 
     // filtrar fornecedores por termo
