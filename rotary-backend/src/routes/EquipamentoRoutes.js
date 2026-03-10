@@ -13,5 +13,7 @@ router.post("/equipamentos", EquipamentoController.cadastrar);
 router.put("/equipamentos/:id", EquipamentoController.atualizar);
 // Rota para deletar um equipamento
 router.delete("/equipamentos/:id", EquipamentoController.excluir);
+// Rota para atualizar o Status do equipamento
+router.patch("/equipamentos/:id/status", EquipamentoController.atualizarStatus);
 
 export default router;
