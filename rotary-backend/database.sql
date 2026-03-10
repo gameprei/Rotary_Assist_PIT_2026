@@ -72,45 +72,50 @@ INSERT INTO BENEFICIARIOS (
     'Tatiane Barbosa', '11998765433', 'Necessita de prótese auditiva e acompanhamento fonoaudiológico'
 );
 
-CREATE TABLE if not exists equipamentos (
-    id INT PRIMARY KEY AUTO_INCREMENT,
-    nome VARCHAR(100) NOT NULL,
+CREATE TABLE IF NOT EXISTS equipamentos (
+    id INT AUTO_INCREMENT PRIMARY KEY,  
+    nome VARCHAR(150) NOT NULL,
     descricao TEXT,
-    tipo VARCHAR(50) NOT NULL,
-    patrimonio VARCHAR(20) UNIQUE NOT NULL,
-    estado_conservacao ENUM('Disponível', 'Em uso', 'Manutenção') DEFAULT 'Disponível',
-    data_aquisicao DATE NOT NULL
+    patrimonio VARCHAR(50) UNIQUE NOT NULL,
+    numero_serie VARCHAR(100) UNIQUE,
+    categoria_id INT NOT NULL,
+    fornecedor_id INT,
+    estado_conservacao ENUM(
+        'NOVO',
+        'BOM',
+        'REGULAR',
+        'RUIM'
+    ) DEFAULT 'BOM',
+    status ENUM(
+        'DISPONIVEL',
+        'EMPRESTADO',
+        'MANUTENCAO',
+        'BAIXADO'
+    ) DEFAULT 'DISPONIVEL',
+    data_aquisicao DATE,
+    data_cadastro TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (categoria_id) REFERENCES categorias(id),
+    FOREIGN KEY (fornecedor_id) REFERENCES fornecedores(id)
 );
 
--- Inserção de dados para cadeiras de rodas e cadeiras para banho
-INSERT INTO equipamentos (nome, descricao, tipo, patrimonio, estado_conservacao, data_aquisicao) VALUES
--- Cadeiras de Rodas
-('Cadeira de Rodas Padrão', 'Cadeira de rodas dobrável, aço carbono, rodas de 24 polegadas', 'Cadeira de Rodas', 'CR-001', 'Em uso', '2024-01-15'),
-('Cadeira de Rodas Transporte', 'Cadeira de rodas leve para transporte, peso 12kg', 'Cadeira de Rodas', 'CR-002', 'Disponível', '2024-02-20'),
-('Cadeira de Rodas Motorizada', 'Cadeira de rodas elétrica, bateria de lítio, controle joystick', 'Cadeira de Rodas', 'CR-003', 'Manutenção', '2024-03-10'),
-('Cadeira de Rodas Pediátrica', 'Cadeira de rodas infantil, ajustável, cores variadas', 'Cadeira de Rodas', 'CR-004', 'Disponível', '2024-01-30'),
-('Cadeira de Rodas Banho', 'Cadeira de rodas especial para banho, material resistente à água', 'Cadeira de Rodas', 'CR-005', 'Em uso', '2024-02-28'),
+INSERT INTO equipamentos
+(nome, descricao, patrimonio, numero_serie, categoria_id, fornecedor_id, estado_conservacao, data_aquisicao)
+VALUES
+('Cadeira de rodas alumínio', 'Cadeira dobrável leve', 'CR001', 'NS-CR-8891', 1, 2, 'NOVO', '2024-03-10'),
+('Cadeira de rodas alumínio', 'Cadeira dobrável leve', 'CR002', 'NS-CR-8892', 1, 2, 'NOVO', '2024-03-10'),
+('Cadeira de rodas reforçada', 'Suporta até 150kg', 'CR003', 'NS-CR-9011', 1, 1, 'BOM', '2023-11-20'),
 
--- Cadeiras para Banho
-('Cadeira para Banho Fixa', 'Cadeira para banho fixa, com encosto alto e apoio de braços', 'Cadeira para Banho', 'CB-001', 'Disponível', '2024-03-05'),
-('Cadeira para Banho Portátil', 'Cadeira para banho dobrável, ajustável em altura', 'Cadeira para Banho', 'CB-002', 'Em uso', '2024-01-22'),
-('Cadeira para Banho com Rodas', 'Cadeira para banho com rodas travas, material antiderrapante', 'Cadeira para Banho', 'CB-003', 'Disponível', '2024-02-14'),
-('Cadeira para Banho Inox', 'Cadeira para banho em aço inoxidável, resistente à umidade', 'Cadeira para Banho', 'CB-004', 'Manutenção', '2024-03-18'),
-('Cadeira para Banho Reclinável', 'Cadeira para banho reclinável, com apoio para cabeça', 'Cadeira para Banho', 'CB-005', 'Em uso', '2024-01-08'),
+('Cadeira de banho inox', 'Resistente à umidade', 'CB001', 'NS-CB-2001', 2, 4, 'NOVO', '2024-01-15'),
+('Cadeira de banho inox', 'Resistente à umidade', 'CB002', 'NS-CB-2002', 2, 4, 'BOM', '2024-01-15'),
 
--- Mais exemplos para completar
-('Cadeira de Rodas Esportiva', 'Cadeira de rodas para atividades esportivas, leve e manobrável', 'Cadeira de Rodas', 'CR-006', 'Disponível', '2024-03-22'),
-('Cadeira de Rodas Elevatória', 'Cadeira de rodas com função elevatória para transferência', 'Cadeira de Rodas', 'CR-007', 'Em uso', '2024-02-05'),
-('Cadeira para Banho com Assento Giratório', 'Cadeira para banho com assento giratório para facilidade de uso', 'Cadeira para Banho', 'CB-006', 'Disponível', '2024-03-12'),
-('Cadeira para Banho de Canto', 'Cadeira para banho especial para box de canto', 'Cadeira para Banho', 'CB-007', 'Manutenção', '2024-01-18');
+('Muleta axilar alumínio', 'Altura ajustável', 'MU001', 'NS-MU-3001', 3, 3, 'NOVO', '2024-02-10'),
+('Muleta axilar alumínio', 'Altura ajustável', 'MU002', 'NS-MU-3002', 3, 3, 'NOVO', '2024-02-10'),
 
--- Inserção adicional para equipamentos mais específicos
-INSERT INTO equipamentos (nome, descricao, tipo, patrimonio, estado_conservacao, data_aquisicao) VALUES
-('Cadeira de Rodas com Amortecedor', 'Cadeira de rodas com sistema de amortecedor para maior conforto', 'Cadeira de Rodas', 'CR-008', 'Disponível', '2024-03-25'),
-('Cadeira para Banho com Apoio Lombar', 'Cadeira para banho com apoio lombar ajustável e encosto ergonômico', 'Cadeira para Banho', 'CB-008', 'Em uso', '2024-02-12'),
-('Cadeira de Rodas Stand-up', 'Cadeira de rodas que permite posição semi-em pé', 'Cadeira de Rodas', 'CR-009', 'Disponível', '2024-03-08'),
-('Cadeira para Banho com Alça de Transferência', 'Cadeira para banho com alças para facilitar transferência do usuário', 'Cadeira para Banho', 'CB-009', 'Em uso', '2024-01-25'),
-('Cadeira de Rodas com Tilt', 'Cadeira de rodas com sistema de inclinação para alívio de pressão', 'Cadeira de Rodas', 'CR-010', 'Manutenção', '2024-03-15');
+('Andador articulado', 'Andador dobrável', 'AN001', 'NS-AN-4100', 4, 9, 'NOVO', '2024-01-30'),
+('Andador articulado', 'Andador dobrável', 'AN002', 'NS-AN-4101', 4, 9, 'BOM', '2024-01-30'),
+
+('Cama hospitalar manual', 'Cama com ajuste de altura', 'CH001', 'NS-CH-5001', 5, 10, 'BOM', '2023-09-12'),
+('Cama hospitalar manual', 'Cama com ajuste de altura', 'CH002', 'NS-CH-5002', 5, 10, 'REGULAR', '2023-09-12');
 
 CREATE TABLE membros (
     nome VARCHAR(100) NOT NULL,
