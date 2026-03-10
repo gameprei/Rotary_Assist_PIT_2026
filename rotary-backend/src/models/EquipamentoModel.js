@@ -30,13 +30,13 @@ class EquipamentoModel {
             FROM equipamentos e
             LEFT JOIN categorias c ON e.categoria_id = c.id
             LEFT JOIN fornecedores f ON e.fornecedor_id = f.id
-            WHERE e.nome LIKE ? OR e.patrimonio LIKE ?
+            WHERE e.nome LIKE ? OR e.patrimonio LIKE ? OR e.id = ?
             ORDER BY e.nome
         `;
 
         const likeTermo = `%${termo}%`;
 
-        const [rows] = await pool.query(query, [likeTermo, likeTermo]);
+        const [rows] = await pool.query(query, [likeTermo, likeTermo, termo]);
 
         return rows;
     }
@@ -102,6 +102,21 @@ class EquipamentoModel {
         }
 
         return result;
+    }
+
+    //atualizar status do equipamento
+    static async atualizarStatus(id, status) {
+
+        const [result] = await pool.query(
+            `UPDATE equipamentos SET status = ? WHERE id = ?`,
+            [status, id]
+        );
+
+        if (result.affectedRows === 0) {
+            throw new Error("Equipamento não encontrado");
+        }
+
+        return { id, status };
     }
 
 }
