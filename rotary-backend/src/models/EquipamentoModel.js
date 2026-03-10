@@ -1,76 +1,108 @@
 import pool from "../config/database.js";
 
 class EquipamentoModel {
+
     // Listar todos os equipamentos
     static async listarTodos() {
-        const [rows] = await pool.query(
-            "SELECT * FROM equipamentos ORDER BY nome"
-        );
+        const query = `
+            SELECT 
+                e.*,
+                c.nome AS categoria,
+                f.nome AS fornecedor
+            FROM equipamentos e
+            LEFT JOIN categorias c ON e.categoria_id = c.id
+            LEFT JOIN fornecedores f ON e.fornecedor_id = f.id
+            ORDER BY e.nome
+        `;
+
+        const [rows] = await pool.query(query);
         return rows;
     }
 
     // buscar equipamento por nome ou patrimonio
     static async buscarPorTermo(termo) {
+
         const query = `
-            SELECT * FROM equipamentos
-            WHERE nome LIKE ? OR patrimonio LIKE ?
-            ORDER BY nome
+            SELECT 
+                e.*,
+                c.nome AS categoria,
+                f.nome AS fornecedor
+            FROM equipamentos e
+            LEFT JOIN categorias c ON e.categoria_id = c.id
+            LEFT JOIN fornecedores f ON e.fornecedor_id = f.id
+            WHERE e.nome LIKE ? OR e.patrimonio LIKE ?
+            ORDER BY e.nome
         `;
+
         const likeTermo = `%${termo}%`;
+
         const [rows] = await pool.query(query, [likeTermo, likeTermo]);
+
         return rows;
     }
 
     // cadastrar novo equipamento
     static async cadastrar(equipamento) {
+
         const {
             nome,
             descricao,
-            tipo,
             patrimonio,
+            numero_serie,
+            categoria_id,
+            fornecedor_id,
             estado_conservacao,
-            data_aquisicao,
+            data_aquisicao
         } = equipamento;
+
         const [result] = await pool.query(
             `INSERT INTO equipamentos
-            (nome, descricao, tipo, patrimonio, estado_conservacao, data_aquisicao)
-            VALUES (?, ?, ?, ?, ?, ?)`,
+            (nome, descricao, patrimonio, numero_serie, categoria_id, fornecedor_id, estado_conservacao, data_aquisicao)
+            VALUES (?, ?, ?, ?, ?, ?, ?, ?)`,
             [
                 nome,
                 descricao,
-                tipo,
                 patrimonio,
+                numero_serie,
+                categoria_id,
+                fornecedor_id,
                 estado_conservacao,
-                data_aquisicao,
+                data_aquisicao
             ]
         );
+
         return { id: result.insertId, ...equipamento };
     }
-    
+
     // atualizar equipamento
     static async atualizar(id, equipamento) {
+
         const [result] = await pool.query(
-            `UPDATE equipamentos SET ? WHERE patrimonio = ?`,
+            `UPDATE equipamentos SET ? WHERE id = ?`,
             [equipamento, id]
         );
+
         if (result.affectedRows === 0) {
             throw new Error("Equipamento não encontrado");
         }
+
         return { id, ...equipamento };
     }
 
-    // exclui equipamento
+    // excluir equipamento
     static async excluir(id) {
+
         const [result] = await pool.query(
-            `DELETE FROM equipamentos WHERE patrimonio = ?`,
+            `DELETE FROM equipamentos WHERE id = ?`,
             [id]
         );
-        if(result.affectedRows === 0){
-            return 
-        }
-        return result.affectedRows
-    }
 
+        if (result.affectedRows === 0) {
+            return;
+        }
+
+        return result;
+    }
 
 }
 
