@@ -253,3 +253,23 @@ INSERT INTO categorias (nome, tipo, descricao) VALUES
 ('Manutenção de equipamentos', 'FORNECEDOR', 'Fornecedor que realiza manutenção'),
 ('Venda de equipamentos', 'FORNECEDOR', 'Fornecedor que vende equipamentos médicos'),
 ('Venda de peças', 'FORNECEDOR', 'Fornecedor especializado em peças de reposição');
+
+CREATE TABLE emprestimos (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    equipamento_id INT NOT NULL,
+    beneficiario_cpf CHAR(11) NOT NULL,
+    membro_cpf CHAR(11),
+    data_emprestimo DATE NOT NULL,
+    data_prevista_devolucao DATE,
+    data_devolucao DATE,
+    status ENUM(
+        'ATIVO',
+        'DEVOLVIDO',
+        'ATRASADO'
+    ) DEFAULT 'ATIVO',
+    observacoes TEXT,
+    data_registro TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (equipamento_id) REFERENCES equipamentos(id),
+    FOREIGN KEY (beneficiario_cpf) REFERENCES beneficiarios(cpf),
+    FOREIGN KEY (membro_cpf) REFERENCES membros(cpf)
+);
