@@ -23,10 +23,10 @@ class CategoriaModel {
 
     // cadastrar nova categoria
     static async cadastrar(categoria) {
-        const { nome, descricao } = categoria;
+        const { nome, tipo, descricao } = categoria;
         const [result] = await pool.query(
-            `INSERT INTO categorias (nome, descricao) VALUES (?, ?)`,
-            [nome, descricao]
+            `INSERT INTO categorias (nome, tipo, descricao) VALUES (?, ?, ?)`,
+            [nome, tipo, descricao]
         );
         return { id: result.insertId, ...categoria };
     }
