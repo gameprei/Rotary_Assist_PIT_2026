@@ -181,44 +181,50 @@ INSERT INTO membros (
     nome VARCHAR(150) NOT NULL,
     cpf VARCHAR(14) UNIQUE,
     cnpj VARCHAR(18) UNIQUE,
-    tipo_fornecedor ENUM(
-        'MANUTENCAO',
-        'VENDA_EQUIPAMENTO',
-        'VENDA_PECA',
-        'MULTISERVICO'
-    ) NOT NULL,
     telefone VARCHAR(20),
     email VARCHAR(150),
-    endereco VARCHAR(255),
+    endereco VARCHAR(150),
+    bairro VARCHAR(100),
+    cidade VARCHAR(100),
+    uf CHAR(2),
+    cep CHAR(8),
     status ENUM('ATIVO','INATIVO') DEFAULT 'ATIVO',
     data_cadastro TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
--- Fornecedores Pessoa Jurídica (Empresas especializadas em equipamentos de mobilidade)
-INSERT INTO fornecedores (tipo_pessoa, nome, cnpj, tipo_fornecedor, telefone, email, endereco, status) VALUES
-('PJ', 'Free Wheelchair Mission Brasil', '12.345.678/0001-90', 'VENDA_EQUIPAMENTO', '(11) 3456-7890', 'contato@fwmission.org.br', 'Av. Paulista, 1000 - São Paulo, SP', 'ATIVO'),
-('PJ', 'Mobility Life Equipamentos', '23.456.789/0001-01', 'MULTISERVICO', '(11) 4567-8901', 'vendas@mobilitylife.com.br', 'Rua da Acessibilidade, 500 - São Paulo, SP', 'ATIVO'),
-('PJ', 'Orthopeb Ortopedia Técnica', '34.567.890/0001-12', 'VENDA_EQUIPAMENTO', '(19) 5678-9012', 'comercial@orthopeb.com.br', 'Av. Brasil, 200 - Campinas, SP', 'ATIVO'),
-('PJ', 'Assistech Manutenção de Cadeiras de Rodas', '45.678.901/0001-23', 'MANUTENCAO', '(11) 6789-0123', 'assistencia@assistech.com.br', 'Rua dos Técnicos, 300 - São Paulo, SP', 'ATIVO'),
-('PJ', 'Peças para Reabilitação Ltda', '56.789.012/0001-34', 'VENDA_PECA', '(21) 7890-1234', 'pecas@reabilitacao.com.br', 'Av. Rio Branco, 150 - Rio de Janeiro, RJ', 'ATIVO'),
-('PJ', 'Medical Mobilis Distribuidora', '67.890.123/0001-45', 'VENDA_EQUIPAMENTO', '(31) 8901-2345', 'contato@medicalmobilis.com.br', 'Av. Amazonas, 800 - Belo Horizonte, MG', 'INATIVO'),
-('PJ', 'Ortocenter Peças e Acessórios', '78.901.234/0001-56', 'VENDA_PECA', '(41) 9012-3456', 'vendas@ortocenter.com.br', 'Rua das Oficinas, 450 - Curitiba, PR', 'ATIVO'),
-('PJ', 'Global Mobility Solutions', '89.012.345/0001-67', 'MULTISERVICO', '(51) 0123-4567', 'atendimento@globalmobility.com.br', 'Av. Ipiranga, 600 - Porto Alegre, RS', 'ATIVO');
+-- Fornecedores Pessoa Jurídica
+INSERT INTO fornecedores (tipo_pessoa, nome, cnpj, telefone, email, endereco, bairro, cidade, uf, cep, status) VALUES
+('PJ', 'Órtese e Prótese do Brasil Ltda', '12.345.678/0001-90', '(11) 3456-7890', 'comercial@opbrasil.com.br', 'Av. dos Autonomistas, 1500', 'Vila Yara', 'Osasco', 'SP', '06020010', 'ATIVO'),
+('PJ', 'Cadeiras de Rodas Moderna', '23.456.789/0001-01', '(11) 4567-8901', 'vendas@cadeirasmoderna.com.br', 'Rua Vergueiro, 2345', 'Vila Mariana', 'São Paulo', 'SP', '04101300', 'ATIVO'),
+('PJ', 'Mobility Importação e Comércio', '34.567.890/0001-12', '(19) 5678-9012', 'contato@mobilityimport.com.br', 'Av. das Indústrias, 500', 'Jardim Planalto', 'Campinas', 'SP', '13050900', 'ATIVO'),
+('PJ', 'Ortopedia Técnica Nacional', '45.678.901/0001-23', '(11) 6789-0123', 'vendas@ortopediatecnica.com.br', 'Rua Augusta, 789', 'Consolação', 'São Paulo', 'SP', '01305000', 'ATIVO'),
+('PJ', 'Peças e Acessórios para Reabilitação', '56.789.012/0001-34', '(21) 7890-1234', 'pecas@reabilitacao.com.br', 'Av. das Américas, 3500', 'Barra da Tijuca', 'Rio de Janeiro', 'RJ', '22631003', 'ATIVO'),
+('PJ', 'Tecnologia Assistiva Distribuidora', '67.890.123/0001-45', '(31) 8901-2345', 'comercial@tecassistiva.com.br', 'Av. do Contorno, 5120', 'Funcionários', 'Belo Horizonte', 'MG', '30110018', 'INATIVO'),
+('PJ', 'Ortoponto Materiais Ortopédicos', '78.901.234/0001-56', '(41) 9012-3456', 'vendas@ortoponto.com.br', 'Rua XV de Novembro, 1500', 'Centro', 'Curitiba', 'PR', '80020010', 'ATIVO'),
+('PJ', 'Reabilitech Soluções em Mobilidade', '89.012.345/0001-67', '(51) 0123-4567', 'atendimento@reabilitech.com.br', 'Av. Ipiranga, 6681', 'Partenon', 'Porto Alegre', 'RS', '90619900', 'ATIVO'),
+('PJ', 'Free Wheelchair Mission Brasil', '90.123.456/0001-78', '(11) 99876-5432', 'projetos@fwmission.org.br', 'Rua Verbo Divino, 1488', 'Santo Amaro', 'São Paulo', 'SP', '04719904', 'ATIVO'),
+('PJ', 'Mobility Life Equipamentos', '01.234.567/0001-89', '(11) 98765-4321', 'vendas@mobilitylife.com.br', 'Rua da Acessibilidade, 500', 'Jardim Paulista', 'São Paulo', 'SP', '01415000', 'ATIVO'),
+('PJ', 'Orthopeb Ortopedia Técnica', '98.765.432/0001-10', '(19) 97654-3210', 'comercial@orthopeb.com.br', 'Av. Brasil, 200', 'Jardim Guanabara', 'Campinas', 'SP', '13073000', 'INATIVO'),
+('PJ', 'Assistech Manutenção de Cadeiras de Rodas', '87.654.321/0001-98', '(19) 96543-2109', 'assistencia@assistech.com.br', 'Av. Francisco Glicério, 400', 'Centro', 'Campinas', 'SP', '13012000', 'ATIVO');
 
 -- Fornecedores Pessoa Física (Técnicos especializados e pequenos prestadores)
-INSERT INTO fornecedores (tipo_pessoa, nome, cpf, tipo_fornecedor, telefone, email, endereco, status) VALUES
-('PF', 'João Batista de Oliveira', '123.456.789-01', 'MANUTENCAO', '(11) 91234-5678', 'tecnico.joao@email.com', 'Rua das Flores, 123 - São Paulo, SP', 'ATIVO'),
-('PF', 'Márcio Antunes da Silva', '234.567.890-12', 'VENDA_EQUIPAMENTO', '(11) 92345-6789', 'marcio.equipamentos@email.com', 'Av. Brasil, 456 - São Paulo, SP', 'ATIVO'),
-('PF', 'Roberto Carlos Ferreira', '345.678.901-23', 'VENDA_PECA', '(19) 93456-7890', 'roberto.pecas@email.com', 'Rua XV de Novembro, 789 - Campinas, SP', 'INATIVO'),
-('PF', 'Maria Aparecida Costa', '456.789.012-34', 'MULTISERVICO', '(21) 94567-8901', 'maria.servicos@email.com', 'Rua da Praia, 234 - Rio de Janeiro, RJ', 'ATIVO'),
-('PF', 'José Renato Souza', '567.890.123-45', 'MANUTENCAO', '(31) 95678-9012', 'jose.manutencao@email.com', 'Av. Afonso Pena, 567 - Belo Horizonte, MG', 'ATIVO'),
-('PF', 'Fernanda Cristina Lima', '678.901.234-56', 'VENDA_EQUIPAMENTO', '(41) 96789-0123', 'fernanda.mobilidade@email.com', 'Rua das Araucárias, 890 - Curitiba, PR', 'ATIVO'),
-('PF', 'Ricardo de Almeida', '789.012.345-67', 'VENDA_PECA', '(51) 97890-1234', 'ricardo.almeida@email.com', 'Av. Goethe, 123 - Porto Alegre, RS', 'ATIVO'),
-('PF', 'Patrícia Gomes Ferreira', '890.123.456-78', 'MULTISERVICO', '(61) 98901-2345', 'patricia.reabilitacao@email.com', 'SHS Quadra 6, Bloco C - Brasília, DF', 'ATIVO');
+INSERT INTO fornecedores (tipo_pessoa, nome, cpf, telefone, email, endereco, bairro, cidade, uf, cep, status) VALUES
+('PF', 'João Batista de Oliveira', '123.456.789-01', '(11) 91234-5678', 'joao.tecnicomobilidade@email.com', 'Rua das Flores, 123', 'Jardim das Oliveiras', 'São Paulo', 'SP', '03624010', 'ATIVO'),
+('PF', 'Márcio Antunes da Silva', '234.567.890-12', '(11) 92345-6789', 'marcio.equipamentos@email.com', 'Av. Brasil, 456', 'Jardim América', 'São Paulo', 'SP', '01431000', 'ATIVO'),
+('PF', 'Roberto Carlos Ferreira', '345.678.901-23', '(19) 93456-7890', 'roberto.ortopedia@email.com', 'Rua XV de Novembro, 789', 'Centro', 'Campinas', 'SP', '13015000', 'INATIVO'),
+('PF', 'Maria Aparecida Costa', '456.789.012-34', '(21) 94567-8901', 'maria.tecnicos@email.com', 'Rua da Praia, 234', 'Centro', 'Rio de Janeiro', 'RJ', '20021010', 'ATIVO'),
+('PF', 'José Renato Souza', '567.890.123-45', '(31) 95678-9012', 'jose.manutencaocr@email.com', 'Av. Afonso Pena, 567', 'Centro', 'Belo Horizonte', 'MG', '30130000', 'ATIVO'),
+('PF', 'Fernanda Cristina Lima', '678.901.234-56', '(41) 96789-0123', 'fernanda.ortopedia@email.com', 'Rua das Araucárias, 890', 'Jardim Social', 'Curitiba', 'PR', '82520000', 'ATIVO'),
+('PF', 'Ricardo de Almeida', '789.012.345-67', '(51) 97890-1234', 'ricardo.tecnicopoa@email.com', 'Av. Goethe, 123', 'Rio Branco', 'Porto Alegre', 'RS', '90430000', 'ATIVO'),
+('PF', 'Patrícia Gomes Ferreira', '890.123.456-78', '(61) 98901-2345', 'patricia.reabilitacao@email.com', 'SHS Quadra 6, Bloco C', 'Asa Sul', 'Brasília', 'DF', '70322900', 'ATIVO'),
+('PF', 'Carlos Eduardo Nascimento', '901.234.567-89', '(11) 99876-5432', 'carlos.ajustes@email.com', 'Rua dos Técnicos, 456', 'Ipiranga', 'São Paulo', 'SP', '04263000', 'ATIVO'),
+('PF', 'Ana Beatriz Santos', '012.345.678-90', '(19) 98765-4321', 'ana.adaptacoes@email.com', 'Av. Dr. Moraes Salles, 789', 'Centro', 'Campinas', 'SP', '13010000', 'ATIVO'),
+('PF', 'Paulo Henrique Oliveira', '123.456.789-02', '(21) 97654-3210', 'paulo.tecnicorj@email.com', 'Rua Voluntários da Pátria, 321', 'Botafogo', 'Rio de Janeiro', 'RJ', '22270000', 'INATIVO'),
+('PF', 'Luciana Mendes Rocha', '234.567.890-23', '(31) 96543-2109', 'luciana.ortopedia@email.com', 'Rua da Bahia, 654', 'Centro', 'Belo Horizonte', 'MG', '30160000', 'ATIVO');
 
--- Fornecedores adicionais especializados (ortopedia técnica e reabilitação)
-INSERT INTO fornecedores (tipo_pessoa, nome, cnpj, tipo_fornecedor, telefone, email, endereco, status) VALUES
-('PJ', 'Tecno Mobility Indústria e Comércio', '90.123.456/0001-78', 'VENDA_EQUIPAMENTO', '(11) 99876-5432', 'comercial@tecnomobility.com.br', 'Rua da Indústria, 150 - São Paulo, SP', 'ATIVO'),
-('PJ', 'Ortoponto Produtos Ortopédicos', '01.234.567/0001-89', 'VENDA_PECA', '(11) 98765-4321', 'vendas@ortoponto.com.br', 'Av. das Nações, 750 - São Paulo, SP', 'ATIVO'),
-('PJ', 'Adapta Equipamentos sob Medida', '98.765.432/0001-10', 'MULTISERVICO', '(16) 97654-3210', 'contato@adaptaequipamentos.com.br', 'Rodovia Anhanguera, km 300 - Ribeirão Preto, SP', 'INATIVO'),
-('PJ', 'Reabilitar Técnica em Manutenção', '87.654.321/0001-98', 'MANUTENCAO', '(19) 96543-2109', 'os@reabilitartecnica.com.br', 'Av. Francisco Glicério, 400 - Campinas, SP', 'ATIVO');
+-- Fornecedores adicionais especializados
+INSERT INTO fornecedores (tipo_pessoa, nome, cnpj, telefone, email, endereco, bairro, cidade, uf, cep, status) VALUES
+('PJ', 'Tecno Mobility Indústria e Comércio', '11.222.333/0001-44', '(11) 95555-1234', 'comercial@tecnomobility.com.br', 'Rua da Indústria, 150', 'Jardim São Paulo', 'São Paulo', 'SP', '02022000', 'ATIVO'),
+('PJ', 'Ortoponto Produtos Ortopédicos', '22.333.444/0001-55', '(11) 94444-5678', 'vendas@ortoponto.com.br', 'Av. das Nações, 750', 'Vila Olímpia', 'São Paulo', 'SP', '04555000', 'ATIVO'),
+('PJ', 'Adapta Equipamentos sob Medida', '33.444.555/0001-66', '(16) 93333-8901', 'contato@adaptaequipamentos.com.br', 'Rodovia Anhanguera, km 300', 'Jardim Canadá', 'Ribeirão Preto', 'SP', '14090000', 'INATIVO'),
+('PJ', 'Reabilitar Técnica em Manutenção', '44.555.666/0001-77', '(19) 92222-3456', 'os@reabilitartecnica.com.br', 'Av. Dr. Antônio Carlos Couto de Barros, 890', 'Parque Industrial', 'Campinas', 'SP', '13069900', 'ATIVO');
