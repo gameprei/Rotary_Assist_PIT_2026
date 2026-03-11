@@ -42,57 +42,67 @@ class EquipamentoController {
   }
 
   // Cadastrar novo equipamento
-  static async cadastrar(req, res) {
+static async cadastrar(req, res) {
     try {
 
-      const {
-        nome,
-        descricao,
-        patrimonio,
-        numero_serie,
-        categoria_id,
-        fornecedor_id,
-        estado_conservacao,
-        data_aquisicao
-      } = req.body;
+        const {
+            nome,
+            descricao,
+            patrimonio,
+            numero_serie,
+            categoria_id,
+            fornecedor_id,
+            estado_conservacao,
+            data_aquisicao
+        } = req.body;
 
-      if (
-        !nome ||
-        !descricao ||
-        !patrimonio ||
-        !categoria_id ||
-        !estado_conservacao ||
-        !data_aquisicao
-      ) {
-        return res
-          .status(400)
-          .json({ message: "Todos os campos obrigatórios devem ser preenchidos" });
-      }
+        // Validação básica da requisição
+        if (
+            !nome ||
+            !patrimonio ||
+            !categoria_id ||
+            !estado_conservacao ||
+            !data_aquisicao
+        ) {
+            return res.status(400).json({
+                error: "Campos obrigatórios ausentes"
+            });
+        }
 
-      const novoEquipamento = await EquipamentoModel.cadastrar({
-        nome,
-        descricao,
-        patrimonio,
-        numero_serie,
-        categoria_id,
-        fornecedor_id,
-        estado_conservacao,
-        data_aquisicao
-      });
+        const novoEquipamento = await EquipamentoModel.cadastrar({
+            nome,
+            descricao,
+            patrimonio,
+            numero_serie,
+            categoria_id,
+            fornecedor_id,
+            estado_conservacao,
+            data_aquisicao
+        });
 
-      res.status(201).json(novoEquipamento);
+        return res.status(201).json(novoEquipamento);
 
     } catch (error) {
 
-      console.error("Erro ao cadastrar equipamento:", error);
+        console.error("Erro ao cadastrar equipamento:", error);
 
-      if (error.code === "ER_DUP_ENTRY") {
-        return res.status(400).json({ message: "Patrimônio já cadastrado" });
-      }
+        // Erros de regra de negócio vindos do Model
+        if (
+            error.message === "Campos obrigatórios ausentes" ||
+            error.message === "Já existe um equipamento com este patrimônio" ||
+            error.message === "Número de série já cadastrado" ||
+            error.message === "Categoria não encontrada" ||
+            error.message === "Fornecedor não encontrado"
+        ) {
+            return res.status(400).json({ error: error.message });
+        }
 
-      res.status(500).json({ message: "Erro ao cadastrar equipamento" });
+        // Erro inesperado
+        return res.status(500).json({
+            error: "Erro interno ao cadastrar equipamento"
+        });
     }
-  }
+}
 
   // Atualizar equipamento
   static async atualizar(req, res) {

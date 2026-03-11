@@ -55,6 +55,47 @@ class EquipamentoModel {
             data_aquisicao
         } = equipamento;
 
+        // Verificar se já existe equipamento com mesmo patrimônio
+        const [patrimonioExistente] = await pool.query(
+            `SELECT id FROM equipamentos WHERE patrimonio = ?`,
+            [patrimonio]
+        );
+        if (patrimonioExistente.length > 0) {
+            throw new Error("Já existe um equipamento cadastrado com este patrimônio");
+        }
+
+        // Verificar se já existe equipamento com mesmo número de série (se fornecido)
+        if (numero_serie) {
+            const [serieExistente] = await pool.query(
+                "SELECT id FROM equipamentos WHERE numero_serie = ?",
+                [numero_serie]
+            );
+
+            if (serieExistente.length > 0) {
+                throw new Error("Número de série já cadastrado");
+            }
+        }
+
+        //categoria deve existir e estar ativa 
+        const [categoria] = await pool.query(
+            "SELECT id FROM categorias WHERE id = ? AND status = 'ATIVO'",
+            [categoria_id]
+        );
+
+        if (categoria.length === 0) {
+            throw new Error("Categoria não encontrada ou inativa");
+        }
+
+        //fornecedor deve existir e estar ativo
+        const [fornecedor] = await pool.query(
+            "SELECT id FROM fornecedores WHERE id = ? AND status = 'ATIVO'",
+            [fornecedor_id]
+        );
+
+        if (fornecedor.length === 0) {
+            throw new Error("Fornecedor não encontrado ou inativo");
+        }
+        
         const [result] = await pool.query(
             `INSERT INTO equipamentos
             (nome, descricao, patrimonio, numero_serie, categoria_id, fornecedor_id, estado_conservacao, data_aquisicao)
