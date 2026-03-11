@@ -14,13 +14,13 @@ export async function seedDatabase() {
     // CATEGORIAS
     // -------------------------
     await pool.query(`
-        INSERT INTO categorias (id, nome)
-        VALUES
-        (1, 'Cadeira de rodas'),
-        (2, 'Cadeira de banho'),
-        (3, 'Muleta'),
-        (4, 'Andador'),
-        (5, 'Cama hospitalar')
+    INSERT INTO categorias (id, nome, tipo)
+    VALUES
+    (1, 'Cadeira de rodas', 'MOBILIDADE'),
+    (2, 'Cadeira de banho', 'HIGIENE'),
+    (3, 'Muleta', 'MOBILIDADE'),
+    (4, 'Andador', 'MOBILIDADE'),
+    (5, 'Cama hospitalar', 'LEITO')
     `);
 
     // -------------------------

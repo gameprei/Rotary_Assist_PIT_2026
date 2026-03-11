@@ -2,12 +2,12 @@ import request from "supertest";
 import app from "../app.js";
 import "./setup.js";
 
-describe("POST /emprestimos", () => {
+describe("POST /api/emprestimos", () => {
 
     test("deve registrar empréstimo via API", async () => {
 
         const response = await request(app)
-            .post("/emprestimos")
+            .post("/api/emprestimos")
             .send({
                 equipamento_id: 1,
                 beneficiario_cpf: "12345678901",
