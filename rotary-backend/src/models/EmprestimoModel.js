@@ -89,6 +89,27 @@ class EmprestimoModel {
                 throw new Error("Membro responsável não encontrado");
             }
 
+            // Validar datas
+            const regexData = /^\d{4}-\d{2}-\d{2}$/;
+
+            // Verificar formato das datas
+            if (!regexData.test(data_emprestimo) || !regexData.test(data_prevista_devolucao)) {
+                throw new Error("Formato de data inválido. Use YYYY-MM-DD");
+            }
+
+            const dataEmprestimo = new Date(data_emprestimo);
+            const dataDevolucao = new Date(data_prevista_devolucao);
+
+            // Verificar se as datas são válidas
+            if (isNaN(dataEmprestimo.getTime()) || isNaN(dataDevolucao.getTime())) {
+                throw new Error("Datas inválidas");
+            }
+
+            // Verificar se a data prevista de devolução é posterior à data de empréstimo
+            if (dataDevolucao <= dataEmprestimo) {
+                throw new Error("Data prevista de devolução deve ser posterior à data do empréstimo");
+            }
+
             // Registrar empréstimo
             const [result] = await connection.query(
                 `INSERT INTO emprestimos
