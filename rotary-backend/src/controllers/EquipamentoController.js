@@ -42,67 +42,58 @@ class EquipamentoController {
   }
 
   // Cadastrar novo equipamento
-static async cadastrar(req, res) {
+  static async cadastrar(req, res) {
     try {
 
-        const {
-            nome,
-            descricao,
-            patrimonio,
-            numero_serie,
-            categoria_id,
-            fornecedor_id,
-            estado_conservacao,
-            data_aquisicao
-        } = req.body;
+      const {
+        nome,
+        descricao,
+        patrimonio,
+        numero_serie,
+        categoria_id,
+        fornecedor_id,
+        estado_conservacao,
+        data_aquisicao
+      } = req.body;
 
-        // Validação básica da requisição
-        if (
-            !nome ||
-            !patrimonio ||
-            !categoria_id ||
-            !estado_conservacao ||
-            !data_aquisicao
-        ) {
-            return res.status(400).json({
-                error: "Campos obrigatórios ausentes"
-            });
-        }
-
-        const novoEquipamento = await EquipamentoModel.cadastrar({
-            nome,
-            descricao,
-            patrimonio,
-            numero_serie,
-            categoria_id,
-            fornecedor_id,
-            estado_conservacao,
-            data_aquisicao
+      // Validação básica da requisição
+      if (
+        !nome ||
+        !patrimonio ||
+        !categoria_id ||
+        !estado_conservacao ||
+        !data_aquisicao
+      ) {
+        return res.status(400).json({
+          error: "Campos obrigatórios ausentes"
         });
+      }
 
-        return res.status(201).json(novoEquipamento);
+      const novoEquipamento = await EquipamentoModel.cadastrar({
+        nome,
+        descricao,
+        patrimonio,
+        numero_serie,
+        categoria_id,
+        fornecedor_id,
+        estado_conservacao,
+        data_aquisicao
+      });
+
+      return res.status(201).json(novoEquipamento);
 
     } catch (error) {
 
-        console.error("Erro ao cadastrar equipamento:", error);
-
-        // Erros de regra de negócio vindos do Model
-        if (
-            error.message === "Campos obrigatórios ausentes" ||
-            error.message === "Já existe um equipamento com este patrimônio" ||
-            error.message === "Número de série já cadastrado" ||
-            error.message === "Categoria não encontrada" ||
-            error.message === "Fornecedor não encontrado"
-        ) {
-            return res.status(400).json({ error: error.message });
-        }
-
-        // Erro inesperado
-        return res.status(500).json({
-            error: "Erro interno ao cadastrar equipamento"
-        });
+      // Erros de regra de negócio vindos do Model
+      if (error instanceof Error) {
+        return res.status(400).json({ error: error.message });
+      }
+      // Erro inesperado
+      return res.status(500).json({
+        error: "Erro interno ao cadastrar equipamento"
+      });
     }
-}
+  }
 
   // Atualizar equipamento
   static async atualizar(req, res) {
