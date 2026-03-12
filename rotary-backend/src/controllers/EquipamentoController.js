@@ -99,7 +99,7 @@ class EquipamentoController {
   static async atualizar(req, res) {
     try {
 
-      const { id } = req.params;
+      const id = Number(req.params.id);
 
       const {
         nome,
@@ -112,8 +112,11 @@ class EquipamentoController {
         data_aquisicao
       } = req.body;
 
-      if (!req.body) {
-        return res.status(400).json({ message: "Corpo da requisição vazio" });
+      // Verificar se o corpo da requisição está vazio
+      if (!req.body || Object.keys(req.body).length === 0) {
+        return res.status(400).json({
+          error: "Corpo da requisição vazio"
+        });
       }
 
       const equipamentoAtualizado = await EquipamentoModel.atualizar(id, {
@@ -127,17 +130,20 @@ class EquipamentoController {
         data_aquisicao
       });
 
-      res.json(equipamentoAtualizado);
+      return res.status(200).json(equipamentoAtualizado);
 
     } catch (error) {
 
-      console.error("Erro ao atualizar equipamento:", error);
-
-      if (error.code === "ER_DUP_ENTRY") {
-        return res.status(400).json({ message: "Patrimônio já cadastrado" });
+      // Erros de regra de negócio vindos do Model
+      if (error instanceof Error) {
+        return res.status(400).json({ error: error.message });
       }
 
-      res.status(500).json({ message: "Erro interno do servidor" });
+      // Erro inesperado
+      return res.status(500).json({
+        error: "Erro interno ao atualizar equipamento"
+      });
+
     }
   }
 
