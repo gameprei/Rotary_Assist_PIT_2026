@@ -24,6 +24,16 @@ class CategoriaModel {
     // cadastrar nova categoria
     static async cadastrar(categoria) {
         const { nome, tipo, descricao } = categoria;
+
+        // Verificar se já existe categoria com mesmo nome
+        const [nomeExistente] = await pool.query(
+            `SELECT id FROM categorias WHERE nome = ?`,
+            [nome]
+        );
+        if (nomeExistente.length > 0) {
+            throw new Error("Já existe categoria com este nome");
+        }
+
         const [result] = await pool.query(
             `INSERT INTO categorias (nome, tipo, descricao) VALUES (?, ?, ?)`,
             [nome, tipo, descricao]
