@@ -38,6 +38,16 @@ class FornecedorModel {
             status
         } = fornecedor;
 
+        // Verificar se já existe fornecedor com mesmo cpf 
+        const [cpfExistente] = await pool.query(
+            `SELECT id FROM fornecedores WHERE cpf = ?`,
+            [cpf]
+        );
+        if (cpfExistente.length > 0) {
+            throw new Error("Já existe fornecedor com este CPF");
+        }
+
+
         const [result] = await pool.query(
             `INSERT INTO fornecedores 
                 (tipo_pessoa, nome, cpf, cnpj, telefone, email, endereco, bairro, cidade, uf, cep, status) 
