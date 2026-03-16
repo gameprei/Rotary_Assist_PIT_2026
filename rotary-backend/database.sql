@@ -273,3 +273,21 @@ CREATE TABLE emprestimos (
     FOREIGN KEY (beneficiario_cpf) REFERENCES beneficiarios(cpf),
     FOREIGN KEY (membro_cpf) REFERENCES membros(cpf)
 );
+
+CREATE TABLE motivos_baixa (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    nome VARCHAR(100) NOT NULL,
+    status ENUM('ATIVO','INATIVO') DEFAULT 'ATIVO'
+);
+
+CREATE TABLE baixas_equipamento (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    equipamento_id INT NOT NULL,
+    motivo_id INT NOT NULL,
+    membro_cpf VARCHAR(11),
+    data_baixa DATE NOT NULL,
+    observacao TEXT,
+
+    FOREIGN KEY (equipamento_id) REFERENCES equipamentos(id),
+    FOREIGN KEY (motivo_id) REFERENCES motivos_baixa(id)
+);
