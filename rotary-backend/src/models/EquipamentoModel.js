@@ -4,6 +4,7 @@ class EquipamentoModel {
 
     // Listar todos os equipamentos
     static async listarTodos() {
+
         const query = `
             SELECT 
                 e.*,
@@ -21,6 +22,10 @@ class EquipamentoModel {
 
     // buscar equipamento por nome ou patrimonio
     static async buscarPorTermo(termo) {
+
+        if (!termo) {
+            throw new Error("Termo de busca é obrigatório");
+        }
 
         const query = `
             SELECT 
@@ -44,6 +49,10 @@ class EquipamentoModel {
     // cadastrar novo equipamento
     static async cadastrar(equipamento) {
 
+        if (!equipamento) {
+            throw new Error("Dados do equipamento são obrigatórios");
+        }
+
         const {
             nome,
             descricao,
@@ -55,19 +64,31 @@ class EquipamentoModel {
             data_aquisicao
         } = equipamento;
 
-        // Verificar se já existe equipamento com mesmo patrimônio
+        // Validação de campos obrigatórios
+        if (!nome || !patrimonio || !categoria_id || !estado_conservacao || !data_aquisicao) {
+            throw new Error("Campos obrigatórios ausentes");
+        }
+
+        // Validação de data
+        const data = new Date(data_aquisicao);
+        if (isNaN(data.getTime())) {
+            throw new Error("Data de aquisição inválida");
+        }
+
+        // Verificar patrimônio duplicado
         const [patrimonioExistente] = await pool.query(
             `SELECT id FROM equipamentos WHERE patrimonio = ?`,
             [patrimonio]
         );
+
         if (patrimonioExistente.length > 0) {
             throw new Error("Já existe um equipamento cadastrado com este patrimônio");
         }
 
-        // Verificar se já existe equipamento com mesmo número de série (se fornecido)
+        // Número de série duplicado
         if (numero_serie) {
             const [serieExistente] = await pool.query(
-                "SELECT id FROM equipamentos WHERE numero_serie = ?",
+                `SELECT id FROM equipamentos WHERE numero_serie = ?`,
                 [numero_serie]
             );
 
@@ -76,9 +97,9 @@ class EquipamentoModel {
             }
         }
 
-        //categoria deve existir e estar ativa 
+        // Categoria válida
         const [categoria] = await pool.query(
-            "SELECT id FROM categorias WHERE id = ? AND status = 'ATIVO'",
+            `SELECT id FROM categorias WHERE id = ? AND status = 'ATIVO'`,
             [categoria_id]
         );
 
@@ -86,14 +107,16 @@ class EquipamentoModel {
             throw new Error("Categoria não encontrada ou inativa");
         }
 
-        //fornecedor deve existir e estar ativo
-        const [fornecedor] = await pool.query(
-            "SELECT id FROM fornecedores WHERE id = ? AND status = 'ATIVO'",
-            [fornecedor_id]
-        );
+        // Fornecedor válido (opcional)
+        if (fornecedor_id) {
+            const [fornecedor] = await pool.query(
+                `SELECT id FROM fornecedores WHERE id = ? AND status = 'ATIVO'`,
+                [fornecedor_id]
+            );
 
-        if (fornecedor.length === 0) {
-            throw new Error("Fornecedor não encontrado ou inativo");
+            if (fornecedor.length === 0) {
+                throw new Error("Fornecedor não encontrado ou inativo");
+            }
         }
 
         const [result] = await pool.query(
@@ -106,7 +129,7 @@ class EquipamentoModel {
                 patrimonio,
                 numero_serie,
                 categoria_id,
-                fornecedor_id,
+                fornecedor_id || null,
                 estado_conservacao,
                 data_aquisicao
             ]
@@ -118,20 +141,25 @@ class EquipamentoModel {
     // atualizar equipamento
     static async atualizar(id, equipamento) {
 
+        if (!id) {
+            throw new Error("ID do equipamento é obrigatório");
+        }
+
+        if (!equipamento || Object.keys(equipamento).length === 0) {
+            throw new Error("Dados para atualização são obrigatórios");
+        }
+
         const {
-            nome,
-            descricao,
             patrimonio,
             numero_serie,
             categoria_id,
             fornecedor_id,
-            estado_conservacao,
             data_aquisicao
         } = equipamento;
 
-        // Verificar se o equipamento existe
+        // Verificar existência
         const [equipamentoExistente] = await pool.query(
-            "SELECT id FROM equipamentos WHERE id = ?",
+            `SELECT id FROM equipamentos WHERE id = ?`,
             [id]
         );
 
@@ -139,10 +167,10 @@ class EquipamentoModel {
             throw new Error("Equipamento não encontrado");
         }
 
-        // Verificar patrimônio duplicado (ignorando o próprio registro)
+        // Validar patrimônio duplicado
         if (patrimonio) {
             const [patrimonioExistente] = await pool.query(
-                "SELECT id FROM equipamentos WHERE patrimonio = ? AND id != ?",
+                `SELECT id FROM equipamentos WHERE patrimonio = ? AND id != ?`,
                 [patrimonio, id]
             );
 
@@ -151,10 +179,10 @@ class EquipamentoModel {
             }
         }
 
-        // Verificar número de série duplicado
+        // Validar número de série
         if (numero_serie) {
             const [serieExistente] = await pool.query(
-                "SELECT id FROM equipamentos WHERE numero_serie = ? AND id != ?",
+                `SELECT id FROM equipamentos WHERE numero_serie = ? AND id != ?`,
                 [numero_serie, id]
             );
 
@@ -165,30 +193,34 @@ class EquipamentoModel {
 
         // Validar categoria
         if (categoria_id) {
-
             const [categoria] = await pool.query(
-                "SELECT id FROM categorias WHERE id = ? AND status = 'ATIVO'",
+                `SELECT id FROM categorias WHERE id = ? AND status = 'ATIVO'`,
                 [categoria_id]
             );
 
             if (categoria.length === 0) {
                 throw new Error("Categoria não encontrada ou inativa");
             }
-
         }
 
         // Validar fornecedor
         if (fornecedor_id) {
-
             const [fornecedor] = await pool.query(
-                "SELECT id FROM fornecedores WHERE id = ? AND status = 'ATIVO'",
+                `SELECT id FROM fornecedores WHERE id = ? AND status = 'ATIVO'`,
                 [fornecedor_id]
             );
 
             if (fornecedor.length === 0) {
                 throw new Error("Fornecedor não encontrado ou inativo");
             }
+        }
 
+        // Validar data
+        if (data_aquisicao) {
+            const data = new Date(data_aquisicao);
+            if (isNaN(data.getTime())) {
+                throw new Error("Data de aquisição inválida");
+            }
         }
 
         const [result] = await pool.query(
@@ -197,11 +229,14 @@ class EquipamentoModel {
         );
 
         return { id, ...equipamento };
-
     }
 
     // excluir equipamento
     static async excluir(id) {
+
+        if (!id) {
+            throw new Error("ID do equipamento é obrigatório");
+        }
 
         const [result] = await pool.query(
             `DELETE FROM equipamentos WHERE id = ?`,
@@ -209,14 +244,24 @@ class EquipamentoModel {
         );
 
         if (result.affectedRows === 0) {
-            return;
+            throw new Error("Equipamento não encontrado");
         }
 
-        return result;
+        return { message: "Equipamento excluído com sucesso" };
     }
 
-    //atualizar status do equipamento
+    // atualizar status do equipamento
     static async atualizarStatus(id, status) {
+
+        if (!id || !status) {
+            throw new Error("ID e status são obrigatórios");
+        }
+
+        const statusPermitidos = ["DISPONIVEL", "EMPRESTADO", "MANUTENCAO", "BAIXADO"];
+
+        if (!statusPermitidos.includes(status)) {
+            throw new Error("Status inválido");
+        }
 
         const [result] = await pool.query(
             `UPDATE equipamentos SET status = ? WHERE id = ?`,
