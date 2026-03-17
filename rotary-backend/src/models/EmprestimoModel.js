@@ -41,6 +41,10 @@ class EmprestimoModel {
 
             await connection.beginTransaction();
 
+            if (!equipamento_id || !beneficiario_cpf || !membro_cpf || !data_emprestimo || !data_prevista_devolucao) {
+                throw new Error("Todos os campos são obrigatórios");
+            }
+
             // Verificar se o equipamento existe
             const [equipamento] = await connection.query(
                 `SELECT id, status FROM equipamentos WHERE id = ?`,
