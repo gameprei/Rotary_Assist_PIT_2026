@@ -1,18 +1,26 @@
 import { useState, useEffect } from "react";
 import "../shared/App.css";
 import EquipamentosService from "../../services/EquipamentosService.js";
+import FornecedoresService from "../../services/FornecedoresService.js";
+import CategoriasService from "../../services/CategoriasService.js";
 import FormEquipamentos from "./FormEquipamentos.jsx";
 import FormTabelaEquipamentos from "./FormTabelaEquipamentos.jsx";
 
 function CadastrarEquipamentos() {
   const [equipamentos, setEquipamentos] = useState([]);
+  const [categorias, setCategorias] = useState([]);
+  const [fornecedores, setFornecedores] = useState([]);
   const [formData, setFormData] = useState({
+    id: null,
     nome: "",
+    descricao: "",
     patrimonio: "",
-    tipo: "",
+    numero_serie: "",           // NOVO
+    categoria_id: "",           // NOVO
+    fornecedor_id: "",          // NOVO
     estado_conservacao: "",
+    status: "",                 // NOVO
     data_aquisicao: "",
-    descricao: ""
   });
   const [filtro, setFiltro] = useState("");
   const [erros, setErros] = useState({});
@@ -20,7 +28,6 @@ function CadastrarEquipamentos() {
   const [equipamentoEditando, setEquipamentoEditando] = useState(null);
   const [carregando, setCarregando] = useState(false);
 
-  // Carregar equipamentos com service
   const carregarEquipamentos = async () => {
     setCarregando(true);
     try {
@@ -34,16 +41,29 @@ function CadastrarEquipamentos() {
     }
   };
 
-  // Carregar equipamentos na inicialização
+  const carregarAuxiliares = async () => {
+  try {
+    const [cats, forns] = await Promise.all([
+      CategoriasService.listarTodos(),
+      FornecedoresService.listarTodos()
+    ]);
+
+    setCategorias(cats);
+    setFornecedores(forns);
+  } catch (error) {
+    console.error("Erro ao carregar dados auxiliares:", error);
+  }
+  };
+
   useEffect(() => {
     carregarEquipamentos();
+    carregarAuxiliares();
   }, []);
 
-  // Salvar equipamentos utilizando service
   const handleSubmit = async (e) => {
     e.preventDefault();
     if (!validarFormulario()) return;
-    
+
     setCarregando(true);
     try {
       if (editando) {
@@ -54,15 +74,20 @@ function CadastrarEquipamentos() {
         alert("Equipamento cadastrado com sucesso!");
       }
       await carregarEquipamentos();
-      // Limpa o formulário após salvar
+
       setFormData({
+        id: null,
         nome: "",
+        descricao: "",
         patrimonio: "",
-        tipo: "",
+        numero_serie: "",
+        categoria_id: "",
+        fornecedor_id: "",
         estado_conservacao: "",
-        data_aquisicao: "",
-        descricao: ""
+        status: "",
+        data_aquisicao: ""
       });
+
       setEditando(false);
       setEquipamentoEditando(null);
       setErros({});
@@ -74,10 +99,9 @@ function CadastrarEquipamentos() {
     }
   };
 
-  // Excluir equipamento utilizando service
-  const excluirEquipamento = async (patrimonio) => {
+  const excluirEquipamento = async (id) => {
     try {
-      await EquipamentosService.excluir(patrimonio);
+      await EquipamentosService.excluir(id);
       await carregarEquipamentos();
       alert("Equipamento excluído com sucesso!");
     } catch (error) {
@@ -86,13 +110,16 @@ function CadastrarEquipamentos() {
     }
   };
 
-  // Editar equipamento
   const editarEquipamento = (equipamento) => {
     const novosDados = {
       nome: equipamento.nome || "",
       patrimonio: equipamento.patrimonio || "",
       tipo: equipamento.tipo || "",
+      numero_serie: equipamento.numero_serie || "",
+      categoria_id: equipamento.categoria_id || "",
+      fornecedor_id: equipamento.fornecedor_id || "",
       estado_conservacao: equipamento.estado_conservacao || "",
+      status: equipamento.status || "",
       data_aquisicao: equipamento.data_aquisicao || "",
       descricao: equipamento.descricao || ""
     };
@@ -101,26 +128,24 @@ function CadastrarEquipamentos() {
     setEditando(true);
     setEquipamentoEditando(equipamento);
     setErros({});
-    
-    // Rola a página para o topo para ver o formulário
     window.scrollTo(0, 0);
   };
 
-  // Função genérica para atualizar qualquer campo
   const handleInputChange = (campo, valor) => {
     setFormData({ ...formData, [campo]: valor });
   };
 
-  // Validação do formulário
   const validarFormulario = () => {
     const novosErros = {};
 
-    // Validar campos obrigatórios
     const camposObrigatorios = {
       nome: "Nome do equipamento é obrigatório",
       patrimonio: "Patrimônio é obrigatório",
       tipo: "Tipo é obrigatório",
+      categoria_id: "Categoria é obrigatória",      // NOVO
+      fornecedor_id: "Fornecedor é obrigatório",    // NOVO
       estado_conservacao: "Estado de conservação é obrigatório",
+      status: "Status é obrigatório",               // NOVO
       data_aquisicao: "Data de aquisição é obrigatória",
       descricao: "Descrição é obrigatória"
     };
@@ -129,7 +154,6 @@ function CadastrarEquipamentos() {
       if (!formData[campo]) novosErros[campo] = mensagem;
     });
 
-    // Validar formato da data de aquisição
     if (formData.data_aquisicao && !/^\d{4}-\d{2}-\d{2}$/.test(formData.data_aquisicao)) {
       novosErros.data_aquisicao = "Data de aquisição inválida";
     }
@@ -138,13 +162,16 @@ function CadastrarEquipamentos() {
     return Object.keys(novosErros).length === 0;
   };
 
-  // Função para limpar formulário
   const handleCancelar = () => {
     setFormData({
       nome: "",
       patrimonio: "",
       tipo: "",
+      numero_serie: "",
+      categoria_id: "",
+      fornecedor_id: "",
       estado_conservacao: "",
+      status: "",
       data_aquisicao: "",
       descricao: ""
     });
@@ -176,11 +203,15 @@ function CadastrarEquipamentos() {
               erros={erros}
               editando={editando}
               onCancelar={handleCancelar}
+              categorias={categorias}
+              fornecedores={fornecedores}
             />
           )}
         </div>
       </div>
-      <br></br>
+
+      <br />
+
       <div className="prototype-screen active">
         <div className="screen-frame">
           <div className="screen-header">

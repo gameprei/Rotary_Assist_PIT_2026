@@ -21,7 +21,7 @@ function App() {
       {activeTab === "Beneficiários" && <CadastrarBeneficiarios />}
 
       {/* Outras telas futuras */}
-      {activeTab === "Dashboard" && <div>Dashboard</div>}
+      {activeTab === "Fornecedores" && <div>Fornecedores</div>}
       {activeTab === "Login" && <div>Página de Login</div>}
       {activeTab === "Equipamentos" && <CadastrarEquipamentos />} 
       {activeTab === "Relatórios" && <div>Relatórios aqui</div>}

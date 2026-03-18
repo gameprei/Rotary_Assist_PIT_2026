@@ -13,8 +13,11 @@ function FormTabelaEquipamentos({
         (e) =>
           e.nome?.toLowerCase().includes(filtro.toLowerCase()) ||
           e.patrimonio?.toLowerCase().includes(filtro.toLowerCase()) ||
-          e.tipo?.toLowerCase().includes(filtro.toLowerCase()) ||
-          e.estado_conservacao?.toLowerCase().includes(filtro.toLowerCase())
+          e.numero_serie?.toLowerCase().includes(filtro.toLowerCase()) ||
+          e.categoria?.toLowerCase().includes(filtro.toLowerCase()) ||
+          e.estado_conservacao?.toLowerCase().includes(filtro.toLowerCase()) ||
+          e.status?.toLowerCase().includes(filtro.toLowerCase()) ||
+          e.data_aquisicao?.toLowerCase().includes(filtro.toLowerCase())
       )
     : equipamentos;
 
@@ -36,9 +39,10 @@ function FormTabelaEquipamentos({
             <tr>
               <th>Nome</th>
               <th>Patrimônio</th>
-              <th>Tipo</th>
-              <th>Estado</th>
-              <th>Data de Aquisição</th>
+              <th>Numero de Série</th>
+              <th>Categoria</th>
+              <th>Status</th>
+              <th>Estado de conservação</th>
               <th>Ações</th>
             </tr>
           </thead>
@@ -58,13 +62,10 @@ function FormTabelaEquipamentos({
                     <strong>{equipamento.nome}</strong>
                   </td>
                   <td>{equipamento.patrimonio}</td>
-                  <td>{equipamento.tipo}</td>
-                  <td>
-                    <span style={{ color: "#1e3c72" }}>
-                      {equipamento.estado_conservacao}
-                    </span>
-                  </td>
-                  <td>{equipamento.data_aquisicao}</td>
+                  <td>{equipamento.numero_serie}</td>
+                  <td>{equipamento.categoria}</td>
+                  <td>{equipamento.status}</td>
+                  <td>{equipamento.estado_conservacao}</td>
                   <td>
                     <button
                       className="btn btn-primary"
@@ -88,7 +89,7 @@ function FormTabelaEquipamentos({
                             `Tem certeza que deseja EXCLUIR o equipamento ${equipamento.nome}?`
                           )
                         ) {
-                          onExcluirEquipamento(equipamento.patrimonio);
+                          onExcluirEquipamento(equipamento.id);
                         }
                       }}
                     >
