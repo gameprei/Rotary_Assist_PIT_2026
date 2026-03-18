@@ -238,6 +238,15 @@ class EquipamentoModel {
             throw new Error("ID do equipamento é obrigatório");
         }
 
+        const equipamentoStatus = await pool.query(
+            `SELECT id FROM equipamentos WHERE id = ? AND status = 'EMPRESTADO'`,
+            [id]
+        );
+
+        if (equipamentoStatus[0].length === 1) {
+            throw new Error("Equipamento emprestado não pode ser excluído");
+        }
+
         const [result] = await pool.query(
             `DELETE FROM equipamentos WHERE id = ?`,
             [id]
