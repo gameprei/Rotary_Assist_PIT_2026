@@ -11,6 +11,7 @@ function Header({ activeTab, onChangeTab }) {
             <div className="nav-tabs">
                 {[
                     "Login",
+                    "Categorias",
                     "Fornecedores",
                     "Equipamentos",
                     "Beneficiários",

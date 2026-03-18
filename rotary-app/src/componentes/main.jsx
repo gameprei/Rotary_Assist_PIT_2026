@@ -6,6 +6,7 @@ import CadastrarBeneficiarios from './GerenciarBeneficiarios/CadastrarBeneficiar
 import CadastrarMembros from './GerenciarMembros/CadastrarMembros.jsx'
 import CadastrarEquipamentos from './GerenciarEquipamentos/CadastrarEquipamentos.jsx'
 import CadastrarFornecedores from './GerenciarFornecedores/GerenciarFornecedores.jsx'
+import CadastrarCategorias from './GerenciarCategorias/CadastrarCategorias.jsx'
 
 import Header from './shared/Header.jsx'
 
@@ -25,7 +26,7 @@ function App() {
       {activeTab === "Fornecedores" && <div><CadastrarFornecedores/></div>}
       {activeTab === "Login" && <div>Página de Login</div>}
       {activeTab === "Equipamentos" && <CadastrarEquipamentos />} 
-      {activeTab === "Relatórios" && <div>Relatórios aqui</div>}
+      {activeTab === "Categorias" && <CadastrarCategorias />}
     </>
   );
 }
