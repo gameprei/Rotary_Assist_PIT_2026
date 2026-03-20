@@ -61,16 +61,16 @@ class FornecedorModel {
         }
 
         // Validação tipo pessoa
-        if (!["FISICA", "JURIDICA"].includes(tipo_pessoa)) {
+        if (!["PF", "PJ"].includes(tipo_pessoa)) {
             throw new Error("Tipo de pessoa inválido");
         }
 
         // Regra CPF/CNPJ
-        if (tipo_pessoa === "FISICA" && !cpf) {
+        if (tipo_pessoa === "PF" && !cpf) {
             throw new Error("CPF é obrigatório para pessoa física");
         }
 
-        if (tipo_pessoa === "JURIDICA" && !cnpj) {
+        if (tipo_pessoa === "PJ" && !cnpj) {
             throw new Error("CNPJ é obrigatório para pessoa jurídica");
         }
 
@@ -167,7 +167,7 @@ class FornecedorModel {
         }
 
         // Tipo pessoa
-        if (tipo_pessoa && !["FISICA", "JURIDICA"].includes(tipo_pessoa)) {
+        if (tipo_pessoa && !["PF", "PJ"].includes(tipo_pessoa)) {
             throw new Error("Tipo de pessoa inválido");
         }
 
