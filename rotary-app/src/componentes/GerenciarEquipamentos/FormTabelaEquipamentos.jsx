@@ -66,7 +66,7 @@ function FormTabelaEquipamentos({
                   <td>{equipamento.categoria}</td>
                   <td>{equipamento.status}</td>
                   <td>{equipamento.estado_conservacao}</td>
-                  <td>
+                  <td className="actions">
                     <button
                       className="btn btn-primary"
                       onClick={() => {

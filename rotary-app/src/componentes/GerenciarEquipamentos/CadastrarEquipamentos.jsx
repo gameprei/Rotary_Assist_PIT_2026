@@ -11,7 +11,7 @@ function CadastrarEquipamentos() {
   const [categorias, setCategorias] = useState([]);
   const [fornecedores, setFornecedores] = useState([]);
   const [formData, setFormData] = useState({
-    id: null,
+    id: "",
     nome: "",
     descricao: "",
     patrimonio: "",
@@ -67,7 +67,7 @@ function CadastrarEquipamentos() {
     setCarregando(true);
     try {
       if (editando) {
-        await EquipamentosService.atualizar(equipamentoEditando.patrimonio, formData);
+        await EquipamentosService.atualizar(equipamentoEditando.id, formData);
         alert("Equipamento atualizado com sucesso!");
       } else {
         await EquipamentosService.cadastrar(formData);
