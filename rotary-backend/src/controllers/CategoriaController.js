@@ -29,11 +29,16 @@ class CategoriaController {
     // Cadastrar nova categoria
     static async cadastrar(req, res) {
         try {
-            const { nome, tipo, descricao } = req.body;
+            const { nome, tipo, descricao, status } = req.body;
             if (!nome || !tipo || !descricao) {
                 return res.status(400).json({ message: "Todos os campos são obrigatórios" });
             }
-            const novaCategoria = await CategoriaModel.cadastrar({ nome, tipo, descricao });
+
+            if (status && !["ATIVO", "INATIVO"].includes(status)) {
+                return res.status(400).json({ message: "Status inválido" });
+            }
+
+            const novaCategoria = await CategoriaModel.cadastrar({ nome, tipo, descricao, status });
             res.status(201).json(novaCategoria);
         } catch (error) {
             res.status(500).json({ error: error.message });
@@ -44,11 +49,16 @@ class CategoriaController {
     static async atualizar(req, res) {
         try {
             const { id } = req.params;
-            const { nome, descricao } = req.body;
+            const { nome, descricao, status } = req.body;
             if (!nome || !descricao) {
                 return res.status(400).json({ message: "Todos os campos são obrigatórios" });
             }
-            const categoriaAtualizada = await CategoriaModel.atualizar(id, { nome, descricao });
+
+            if (status && !["ATIVO", "INATIVO"].includes(status)) {
+                return res.status(400).json({ message: "Status inválido" });
+            }
+
+            const categoriaAtualizada = await CategoriaModel.atualizar(id, { nome, descricao, status });
             res.json(categoriaAtualizada);
         } catch (error) {
             res.status(500).json({ error: error.message });

@@ -38,11 +38,17 @@ class CategoriaModel {
             throw new Error("Dados da categoria não informados");
         }
 
-        const { nome, tipo, descricao } = categoria;
+        const { nome, tipo, descricao, status } = categoria;
 
         if (!nome || !tipo) {
             throw new Error("Campos obrigatórios ausentes");
         }
+
+        if (status && !["ATIVO", "INATIVO"].includes(status)) {
+            throw new Error("Status inválido");
+        }
+
+        const statusFinal = status || "ATIVO";
 
         // Verificar duplicidade de nome
         const [nomeExistente] = await pool.query(
@@ -55,11 +61,11 @@ class CategoriaModel {
         }
 
         const [result] = await pool.query(
-            `INSERT INTO categorias (nome, tipo, descricao) VALUES (?, ?, ?)`,
-            [nome, tipo, descricao]
+            `INSERT INTO categorias (nome, tipo, descricao, status) VALUES (?, ?, ?, ?)`,
+            [nome, tipo, descricao, statusFinal]
         );
 
-        return { id: result.insertId, ...categoria };
+        return { id: result.insertId, nome, tipo, descricao, status: statusFinal };
     }
 
     // Atualizar categoria
