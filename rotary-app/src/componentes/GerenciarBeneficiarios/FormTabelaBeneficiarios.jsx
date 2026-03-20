@@ -62,7 +62,7 @@ function FormTabelaBeneficiarios({
                       {beneficiario.email}
                     </span>
                   </td>
-                  <td>
+                  <td className="actions">
                     <button
                       className="btn btn-primary"
                       onClick={() => {
