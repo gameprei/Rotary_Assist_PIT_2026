@@ -107,28 +107,6 @@ function FormEmprestimos({
 
             <div className="form-row">
                 <div className="form-group">
-                    <label htmlFor="status">Status:</label>
-                    <select
-                        id="status"
-                        className={`form-control ${erros.status ? "is-invalid" : ""}`}
-                        value={formData.status || ""}
-                        onChange={(e) => handleInputChange("status", e.target.value)}
-                        required
-                    >
-                        <option value="">Selecione o status</option>
-                        <option value="ATIVO">ATIVO</option>
-                        <option value="DEVOLVIDO">DEVOLVIDO</option>
-                        <option value="ATRASADO">ATRASADO</option>
-                        <option value="CANCELADO">CANCELADO</option>
-                    </select>
-                    <div className="invalid-feedback">
-                        {erros.status || "Por favor, selecione o status do empréstimo."}
-                    </div>
-                </div>
-            </div>
-
-            <div className="form-row">
-                <div className="form-group">
                     <label htmlFor="observacoes">Observações:</label>
                     <textarea
                         id="observacoes"

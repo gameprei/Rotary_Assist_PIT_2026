@@ -4,9 +4,6 @@ function FormTabelaEmprestimos({
     emprestimos,
     filtro,
     onFiltroChange,
-    onEditarEmprestimo,
-    onExcluirEmprestimo,
-    onFinalizarEmprestimo
 }) {
     const emprestimosFiltrados = filtro
         ? emprestimos.filter(
@@ -67,7 +64,7 @@ function FormTabelaEmprestimos({
                             <th>Data Empréstimo</th>
                             <th>Data Prevista</th>
                             <th>Status</th>
-                            <th>Ações</th>
+
                         </tr>
                     </thead>
                     <tbody>
@@ -85,37 +82,13 @@ function FormTabelaEmprestimos({
                                     <td>{emprestimo.equipamento_nome || emprestimo.equipamento}</td>
                                     <td>{emprestimo.beneficiario_nome || emprestimo.beneficiario}</td>
                                     <td>{emprestimo.beneficiario_cpf || "-"}</td>
-                                    <td>{emprestimo.membro_nome || emprestimo.membro}</td>
+                                    <td>{emprestimo.membro_cpf || emprestimo.membro_cpf}</td>
                                     <td>{formatarData(emprestimo.data_emprestimo)}</td>
                                     <td>{formatarData(emprestimo.data_prevista_devolucao)}</td>
                                     <td>
                                         <span className={getStatusBadgeClass(emprestimo.status)}>
                                             {emprestimo.status}
                                         </span>
-                                    </td>
-
-                                    {/* Será removido futuramente pois não será possível editar/ excluir nessa função*/}
-                                    <td className="actions-column">
-                                        <button
-                                            className="btn btn-sm btn-primary me-2"
-                                            onClick={() => onEditarEmprestimo(emprestimo)}
-                                        >
-                                            Editar
-                                        </button>
-                                        {emprestimo.status !== 'DEVOLVIDO' && (
-                                            <button
-                                                className="btn btn-sm btn-success me-2"
-                                                onClick={() => onFinalizarEmprestimo(emprestimo.id)}
-                                            >
-                                                Devolver
-                                            </button>
-                                        )}
-                                        <button
-                                            className="btn btn-sm btn-danger"
-                                            onClick={() => onExcluirEmprestimo(emprestimo.id)}
-                                        >
-                                            Excluir
-                                        </button>
                                     </td>
                                 </tr>
                             ))

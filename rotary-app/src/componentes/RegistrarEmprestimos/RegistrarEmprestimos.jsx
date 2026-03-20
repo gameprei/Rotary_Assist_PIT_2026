@@ -111,40 +111,6 @@ function RegistrarEmprestimos() {
         setErros({});
     };
 
-    const editarEmprestimo = (emprestimo) => {
-        setFormData({ ...emprestimo });
-        setEditando(true);
-        setEmprestimoEditando(emprestimo);
-        setErros({});
-        window.scrollTo(0, 0);
-    };
-
-    const excluirEmprestimo = async (id) => {
-        if (!window.confirm("Tem certeza que deseja excluir este empréstimo?")) return;
-
-        try {
-            await EmprestimosService.excluir(id);
-            await carregarEmprestimos();
-            alert("Empréstimo excluído com sucesso!");
-        } catch (error) {
-            console.error("Erro ao excluir empréstimo:", error);
-            alert("Erro ao excluir empréstimo.");
-        }
-    };
-
-    const finalizarEmprestimo = async (id) => {
-        if (!window.confirm("Deseja marcar este empréstimo como devolvido?")) return;
-
-        try {
-            await EmprestimosService.finalizar(id);
-            await carregarEmprestimos();
-            alert("Empréstimo finalizado com sucesso!");
-        } catch (error) {
-            console.error("Erro ao finalizar empréstimo:", error);
-            alert("Erro ao finalizar empréstimo.");
-        }
-    };
-
     return (
         <div className="prototype-screen active">
             <div className="screen-frame">
@@ -164,7 +130,6 @@ function RegistrarEmprestimos() {
                             onFormChange={handleInputChange}
                             onSubmit={handleSubmit}
                             erros={erros}
-                            editando={editando}
                             onCancelar={handleCancelar}
                             equipamentos={equipamentos}
                         />
@@ -182,9 +147,7 @@ function RegistrarEmprestimos() {
                     emprestimos={emprestimos}
                     filtro={filtro}
                     onFiltroChange={setFiltro}
-                    onEditarEmprestimo={editarEmprestimo}
-                    onExcluirEmprestimo={excluirEmprestimo}
-                    onFinalizarEmprestimo={finalizarEmprestimo}
+                    
                 />
             </div>
         </div>
