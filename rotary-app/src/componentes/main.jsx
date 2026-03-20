@@ -28,7 +28,8 @@ function App() {
       {activeTab === "Login" && <div>Página de Login</div>}
       {activeTab === "Equipamentos" && <CadastrarEquipamentos />} 
       {activeTab === "Categorias" && <CadastrarCategorias />}
-      {activeTab === "Empréstimos" && <RegistrarEmprestimos />}
+      {activeTab === "Empréstimos" && <RegistrarEmprestimos
+       />}
     </>
   );
 }
