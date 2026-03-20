@@ -67,7 +67,7 @@ function FormTabelaMembros({
                   </td>
                   <td>{membro.cargo}</td>
                   <td>{membro.data_ingresso}</td>
-                  <td>
+                  <td className="actions">
                     <button
                       className="btn btn-primary"
                       onClick={() => {
