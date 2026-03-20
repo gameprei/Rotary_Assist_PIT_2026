@@ -3,7 +3,6 @@ import "../shared/App.css";
 import CategoriasService from "../../services/CategoriasService.js";
 import FormCategorias from "./FormCategorias.jsx";
 import FormTabelaCategorias from "./FormTabelaCategorias.jsx";
-import FormTabelaFornecedores from "../GerenciarFornecedores/FormTabelaFornecedores.jsx";
 
 function CadastrarCategorias() {
     const [categorias, setCategorias] = useState([]);
@@ -86,15 +85,15 @@ function CadastrarCategorias() {
         setCategoriaEditando(c);
     };
 
-    const handleInputChange = (e) => {
-        const { name, value } = e.target;
-        setFormData((prev) => ({ ...prev, [name]: value }));
+    const handleInputChange = (campo, valor) => {
+        setFormData((prev) => ({ ...prev, [campo]: valor }));
     };
 
     const validarFormulario = () => {
         const novosErros = {};
         if (!formData.nome) novosErros.nome = "Nome é obrigatório";
         if (!formData.tipo) novosErros.tipo = "Tipo é obrigatório";
+        if (!formData.status) novosErros.status = "Status é obrigatório";
         setErros(novosErros);
         return Object.keys(novosErros).length === 0;
     };
@@ -127,9 +126,9 @@ function CadastrarCategorias() {
 
                         <FormCategorias
                             formData={formData}
-                            handleInputChange={handleInputChange}
-                            handleSubmit={handleSubmit}
-                            handleCancelar={handleCancelar}
+                            onFormChange={handleInputChange}
+                            onSubmit={handleSubmit}
+                            onCancelar={handleCancelar}
                             erros={erros}
                             editando={editando}
                         />

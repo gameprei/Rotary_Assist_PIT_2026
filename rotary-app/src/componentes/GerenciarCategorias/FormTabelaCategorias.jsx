@@ -18,6 +18,15 @@ function FormTabelaCategorias({
       )
     : categorias;
 
+    const getStatusBadgeClass = (status) => {
+        switch (status?.toUpperCase()) {
+            case 'ATIVO':
+                return 'badge bg-success';
+            case 'INATIVO':
+                return 'badge bg-warning';
+        }
+    };
+
   return (
     <div className="table-section">
       <div className="filter-container">
@@ -56,8 +65,12 @@ function FormTabelaCategorias({
                   <td>{categoria.nome}</td>
                   <td>{categoria.tipo}</td>
                   <td>{categoria.descricao}</td>
-                  <td>{categoria.status}</td>
                   <td>
+                    <span className={getStatusBadgeClass(categoria.status)}>
+                      {categoria.status}
+                    </span>
+                  </td>
+                  <td className="actions">
                     <button
                       className="btn btn-sm btn-primary me-2"
                       onClick={() => onEditarCategoria(categoria)}
