@@ -1,9 +1,9 @@
 import "./formButton.css";
 
-function FormButton(props) {
+function FormButton({ type = "button", children }) {
   return (
-    <button type={props.type || "button"} className="btn-primary">
-      {props.placeholder}
+    <button type={type} className="btn-primary">
+      {children}
     </button>
   );
 }

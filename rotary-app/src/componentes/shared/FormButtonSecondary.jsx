@@ -1,9 +1,9 @@
-import './FormButtonSecondary.css'
+import './FormButtonSecondary.css';
 
-function FormButtonSecondary(props) {
+function FormButtonSecondary({ type = "button", children }) {
   return (
-    <button type="button" className="btn-secondary">
-      {props.placeholder}
+    <button type={type} className="btn-secondary">
+      {children}
     </button>
   );
 }

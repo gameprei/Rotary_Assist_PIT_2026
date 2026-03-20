@@ -214,6 +214,14 @@
   color: #495057;
   font-size: 0.8rem;
   transition: background-color 0.2s ease;
+
+  vertical-align: middle; /* melhora alinhamento */
+}
+
+.table td.actions {
+  display: flex;
+  gap: 6px;
+  align-items: stretch;
 }
 
 .table tbody tr:last-child td {
