@@ -52,6 +52,7 @@ function CadastrarFornecedores() {
     try {
       if (editando) {
         await FornecedoresService.atualizar(fornecedorEditando.id, formData);
+        
         alert("Fornecedor atualizado com sucesso!");
       } else {
         await FornecedoresService.cadastrar(formData);
@@ -61,6 +62,7 @@ function CadastrarFornecedores() {
       await carregarFornecedores();
       handleCancelar();
     } catch (error) {
+      console.log("Tipo de pessoa:", formData.tipo_pessoa);
       console.error("Erro ao salvar fornecedor:", error);
       alert(`Erro: ${error.message}`);
     } finally {

@@ -25,6 +25,15 @@ function FormTabelaFornecedores({
       )
     : fornecedores;
 
+    const getStatusBadgeClass = (status) => {
+        switch (status?.toUpperCase()) {
+            case 'ATIVO':
+                return 'badge bg-success';
+            case 'INATIVO':
+                return 'badge bg-warning';
+        }
+    };
+
   return (
     <div className="table-section">
       <div className="filter-container">
@@ -72,11 +81,10 @@ function FormTabelaFornecedores({
                   <td>{fornecedor.telefone || "-"}</td>
                   <td>{fornecedor.cidade}/{fornecedor.uf}</td>
                   <td>
-                    <span className={`status-badge status-${fornecedor.status?.toLowerCase()}`}>
-                      {fornecedor.status || "-"}
+                    <span className={getStatusBadgeClass(fornecedor.status)}>{fornecedor.status}
                     </span>
                   </td>
-                  <td className="actions-column">
+                  <td className="actions">
                     <button
                       className="btn btn-sm btn-primary me-2"
                       onClick={() => {
