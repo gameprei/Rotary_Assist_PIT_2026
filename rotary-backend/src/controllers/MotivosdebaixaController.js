@@ -1,41 +1,37 @@
-import MotivosdebaixaModel from "../models/MotivosdebaixaModel.js";
+import MotivosdebaixaService from "../services/MotivosdebaixaService.js";
+import ApiResponse from "../utils/ApiResponse.js";
 
 class MotivosdebaixaController {
     // Listar todas as baixas de equipamentos
-    static async listarTodos(req, res) {
+    static async listarTodos(req, res, next) {
         try {
-            const motivos = await MotivosdebaixaModel.listarTodos();
-            res.json(motivos);
+            const motivos = await MotivosdebaixaService.listarTodos();
+            return res.json(ApiResponse.success(motivos, "Motivos de baixa listados com sucesso"));
         } catch (error) {
-            res.status(500).json({ error: error.message });
+            next(error);
         }
     }
 
     // Cadastrar novo motivo de baixa
-    static async cadastrar(req, res) {
+    static async cadastrar(req, res, next) {
         try {
-            const motivo = req.body;
-            const novoMotivo = await MotivosdebaixaModel.cadastrar(motivo);
-            res.status(201).json(novoMotivo);
+            const novoMotivo = await MotivosdebaixaService.cadastrar(req.body);
+            return res.status(201).json(ApiResponse.success(novoMotivo, "Motivo de baixa cadastrado com sucesso"));
         } catch (error) {
-            res.status(400).json({ error: error.message });
+            next(error);
         }
     }
 
     // Excluir motivo de baixa
-    static async excluir(req, res) {
+    static async excluir(req, res, next) {
         try {
             const { id } = req.params;
-            const sucesso = await MotivosdebaixaModel.excluir(id);
-            if (sucesso) {
-                res.json({ message: "Motivo de baixa excluído com sucesso" });
-            } else {
-                res.status(404).json({ error: "Motivo de baixa não encontrado" });
-            }
+            const resultado = await MotivosdebaixaService.excluir(id);
+            return res.json(ApiResponse.success(resultado, "Motivo de baixa excluído com sucesso"));
         } catch (error) {
-            res.status(500).json({ error: error.message });
+            next(error);
         }
-    }   
+    }
 }
 
 export default MotivosdebaixaController;

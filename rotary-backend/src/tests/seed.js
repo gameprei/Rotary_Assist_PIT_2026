@@ -1,14 +1,37 @@
 import pool from "../config/database.js";
 
 export async function seedDatabase() {
+    // Garante tabelas usadas pelos testes de motivos de baixa no banco de teste
+    await pool.query(`
+        CREATE TABLE IF NOT EXISTS motivos_baixa (
+            id INT AUTO_INCREMENT PRIMARY KEY,
+            nome VARCHAR(100) NOT NULL,
+            status ENUM('ATIVO','INATIVO') DEFAULT 'ATIVO'
+        )
+    `);
+
+    await pool.query(`
+        CREATE TABLE IF NOT EXISTS baixas_equipamento (
+            id INT AUTO_INCREMENT PRIMARY KEY,
+            equipamento_id INT NOT NULL,
+            motivo_id INT NOT NULL,
+            membro_cpf VARCHAR(11),
+            data_baixa DATE NOT NULL,
+            observacao TEXT,
+            FOREIGN KEY (equipamento_id) REFERENCES equipamentos(id),
+            FOREIGN KEY (motivo_id) REFERENCES motivos_baixa(id)
+        )
+    `);
 
     // Limpa tabelas respeitando dependências
+    await pool.query("DELETE FROM baixas_equipamento");
     await pool.query("DELETE FROM emprestimos");
     await pool.query("DELETE FROM equipamentos");
     await pool.query("DELETE FROM beneficiarios");
     await pool.query("DELETE FROM membros");
     await pool.query("DELETE FROM fornecedores");
     await pool.query("DELETE FROM categorias");
+    await pool.query("DELETE FROM motivos_baixa");
 
     // -------------------------
     // CATEGORIAS
@@ -115,6 +138,18 @@ export async function seedDatabase() {
             'BOM',
             'DISPONIVEL'
         )
+    `);
+
+    // -------------------------
+    // MOTIVOS DE BAIXA
+    // -------------------------
+    await pool.query(`
+        INSERT INTO motivos_baixa
+        (id, nome, status)
+        VALUES
+        (1, 'Perda total', 'ATIVO'),
+        (2, 'Fim da vida util', 'ATIVO'),
+        (3, 'Obsolescencia', 'INATIVO')
     `);
 
 }
