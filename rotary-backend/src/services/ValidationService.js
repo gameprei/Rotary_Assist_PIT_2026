@@ -62,6 +62,13 @@ class ValidationService {
     }
   }
 
+  static validarCNPJ(cnpj, message = "CNPJ inválido") {
+    const cnpjRegex = /^(\d{14}|\d{2}\.\d{3}\.\d{3}\/\d{4}-\d{2})$/;
+    if (cnpj && !cnpjRegex.test(cnpj)) {
+      throw new AppError(message, 400);
+    }
+  }
+
   static validarIdPositivo(id, nomeCampo = "ID") {
     const numero = Number(id);
     if (!Number.isInteger(numero) || numero <= 0) {
