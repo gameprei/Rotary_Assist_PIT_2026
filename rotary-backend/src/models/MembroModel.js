@@ -19,6 +19,31 @@ class MembroModel {
     return rows;
   }
 
+  static async buscarPorCpf(cpf) {
+    const [rows] = await pool.query(
+      "SELECT * FROM membros WHERE cpf = ? LIMIT 1",
+      [cpf]
+    );
+
+    return rows[0] || null;
+  }
+
+  static async validarCpfDuplicado(cpf, cpfIgnorado = null) {
+    if (cpfIgnorado) {
+      const [rows] = await pool.query(
+        "SELECT cpf FROM membros WHERE cpf = ? AND cpf <> ? LIMIT 1",
+        [cpf, cpfIgnorado]
+      );
+      return rows.length > 0;
+    }
+
+    const [rows] = await pool.query(
+      "SELECT cpf FROM membros WHERE cpf = ? LIMIT 1",
+      [cpf]
+    );
+    return rows.length > 0;
+  }
+
   // Cadastrar novo membro
   static async cadastrar(membro) {
     const {
@@ -66,18 +91,17 @@ class MembroModel {
 
   // Atualizar membro existente
   static async atualizar(cpfAntigo, membro) {
-    const cpfParaBusca = membro.cpf && membro.cpf !== cpfAntigo ? cpfAntigo : membro.cpf || cpfAntigo;
-    
     const [result] = await pool.query(`UPDATE membros SET ? WHERE cpf = ?`, [
       membro,
-      cpfParaBusca,
+      cpfAntigo,
     ]);
     
     if (result.affectedRows === 0) {
-      throw new Error("Membro não encontrado");
+      return null;
     }
-    
-    return { ...membro };
+
+    const cpfAtual = membro.cpf || cpfAntigo;
+    return await this.buscarPorCpf(cpfAtual);
   }
 
   // Deletar membro

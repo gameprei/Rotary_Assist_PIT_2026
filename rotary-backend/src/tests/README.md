@@ -10,6 +10,10 @@ Organizacao por dominio e camada para facilitar manutencao:
   - controller/
   - service/
   - model/
+- membro/
+  - controller/
+  - service/
+  - model/
 - equipamento/
 - emprestimo/
 - setup.js
