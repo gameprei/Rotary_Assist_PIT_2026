@@ -50,14 +50,13 @@ describe("BeneficiarioModel", () => {
     expect(duplicado).toBe(false);
   });
 
-  test("deve cadastrar beneficiario e retornar resposta padrao", async () => {
+  test("deve cadastrar beneficiario e retornar dados persistidos", async () => {
     const payload = dadosCadastro("55566677788");
 
     const resultado = await BeneficiarioModel.cadastrar(payload);
 
-    expect(resultado.status).toBe("success");
-    expect(resultado.data).toHaveProperty("id");
-    expect(resultado.data.cpf).toBe("55566677788");
+    expect(resultado).toHaveProperty("id");
+    expect(resultado.cpf).toBe("55566677788");
   });
 
   test("deve atualizar beneficiario existente", async () => {
@@ -88,7 +87,7 @@ describe("BeneficiarioModel", () => {
   test("deve excluir beneficiario existente", async () => {
     const novo = await BeneficiarioModel.cadastrar(dadosCadastro("99988877766"));
 
-    const excluiu = await BeneficiarioModel.excluir(novo.data.cpf);
+    const excluiu = await BeneficiarioModel.excluir(novo.cpf);
 
     expect(excluiu).toBe(true);
   });

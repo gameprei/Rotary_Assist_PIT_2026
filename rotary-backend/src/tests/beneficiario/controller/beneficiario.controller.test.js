@@ -1,4 +1,5 @@
 import { jest } from "@jest/globals";
+import ApiResponse from "../../../utils/ApiResponse.js";
 
 const BeneficiarioServiceMock = {
   listarTodos: jest.fn(),
@@ -39,7 +40,9 @@ describe("BeneficiarioController", () => {
     await BeneficiarioController.listarTodos(req, res, next);
 
     expect(BeneficiarioServiceMock.listarTodos).toHaveBeenCalledWith("Joao");
-    expect(res.json).toHaveBeenCalledWith(lista);
+    expect(res.json).toHaveBeenCalledWith(
+      ApiResponse.success(lista, "Beneficiários listados com sucesso")
+    );
     expect(next).not.toHaveBeenCalled();
   });
 
@@ -60,14 +63,16 @@ describe("BeneficiarioController", () => {
     const req = { body: { nome: "Joao" } };
     const res = criarRes();
     const next = jest.fn();
-    const retorno = { status: "success", data: { id: 1, nome: "Joao" } };
+    const retorno = { id: 1, nome: "Joao" };
 
     BeneficiarioServiceMock.cadastrar.mockResolvedValue(retorno);
 
     await BeneficiarioController.cadastrar(req, res, next);
 
     expect(res.status).toHaveBeenCalledWith(201);
-    expect(res.json).toHaveBeenCalledWith(retorno);
+    expect(res.json).toHaveBeenCalledWith(
+      ApiResponse.success(retorno, "Beneficiário cadastrado com sucesso")
+    );
     expect(next).not.toHaveBeenCalled();
   });
 
@@ -84,7 +89,9 @@ describe("BeneficiarioController", () => {
     expect(BeneficiarioServiceMock.atualizar).toHaveBeenCalledWith("12345678901", {
       nome: "Novo",
     });
-    expect(res.json).toHaveBeenCalledWith(retorno);
+    expect(res.json).toHaveBeenCalledWith(
+      ApiResponse.success(retorno, "Beneficiário atualizado com sucesso")
+    );
   });
 
   test("excluir deve retornar mensagem de sucesso", async () => {
@@ -98,8 +105,11 @@ describe("BeneficiarioController", () => {
 
     await BeneficiarioController.excluir(req, res, next);
 
-    expect(res.json).toHaveBeenCalledWith({
-      message: "Beneficiário excluído com sucesso",
-    });
+    expect(res.json).toHaveBeenCalledWith(
+      ApiResponse.success(
+        { message: "Beneficiário excluído com sucesso" },
+        "Beneficiário excluído com sucesso"
+      )
+    );
   });
 });
