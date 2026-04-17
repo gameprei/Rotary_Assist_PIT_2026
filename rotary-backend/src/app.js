@@ -32,4 +32,13 @@ app.listen(PORT, () => {
   console.log(`Servidor rodando na porta ${PORT}`);
 });
 
+// Middleware de tratamento de erros
+app.use((err, req, res, next) => {
+    const statusCode = err.statusCode || 500;
+
+    res.status(statusCode).json({
+        error: err.message
+    });
+});
+
 export default app;
