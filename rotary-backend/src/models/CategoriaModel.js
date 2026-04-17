@@ -12,11 +12,6 @@ class CategoriaModel {
 
     // Buscar categoria por nome ou id
     static async buscarPorTermo(termo) {
-
-        if (!termo) {
-            throw new Error("Termo de busca não informado");
-        }
-
         const query = `
             SELECT * FROM categorias
             WHERE nome LIKE ? OR id = ?
@@ -31,144 +26,83 @@ class CategoriaModel {
         return rows;
     }
 
-    // Cadastrar nova categoria
-    static async cadastrar(categoria) {
+    static async buscarPorId(id) {
+        const [rows] = await pool.query(
+            "SELECT * FROM categorias WHERE id = ? LIMIT 1",
+            [id]
+        );
 
-        if (!categoria || Object.keys(categoria).length === 0) {
-            throw new Error("Dados da categoria não informados");
-        }
+        return rows[0] || null;
+    }
 
-        const { nome, tipo, descricao, status } = categoria;
-
-        if (!nome || !tipo) {
-            throw new Error("Campos obrigatórios ausentes");
-        }
-
-        if (status && !["ATIVO", "INATIVO"].includes(status)) {
-            throw new Error("Status inválido");
-        }
-
-        const statusFinal = status || "ATIVO";
-
-        // Verificar duplicidade de nome
-        const [nomeExistente] = await pool.query(
-            `SELECT id FROM categorias WHERE nome = ?`,
+    static async buscarPorNome(nome) {
+        const [rows] = await pool.query(
+            "SELECT id, nome FROM categorias WHERE nome = ? LIMIT 1",
             [nome]
         );
 
-        if (nomeExistente.length > 0) {
-            throw new Error("Já existe categoria com este nome");
-        }
+        return rows[0] || null;
+    }
+
+    static async categoriaEmUso(id) {
+        const [rows] = await pool.query(
+            "SELECT id FROM equipamentos WHERE categoria_id = ? LIMIT 1",
+            [id]
+        );
+
+        return rows.length > 0;
+    }
+
+    // Cadastrar nova categoria
+    static async cadastrar(categoria) {
+        const { nome, tipo, descricao, status } = categoria;
 
         const [result] = await pool.query(
             `INSERT INTO categorias (nome, tipo, descricao, status) VALUES (?, ?, ?, ?)`,
-            [nome, tipo, descricao, statusFinal]
+            [nome, tipo, descricao, status]
         );
 
-        return { id: result.insertId, nome, tipo, descricao, status: statusFinal };
+        return {
+            id: result.insertId,
+            nome,
+            tipo,
+            descricao,
+            status,
+        };
     }
 
     // Atualizar categoria
     static async atualizar(id, categoria) {
-
-        if (!Number.isInteger(Number(id)) || Number(id) <= 0) {
-            throw new Error("ID inválido");
-        }
-
-        if (!categoria || Object.keys(categoria).length === 0) {
-            throw new Error("Nenhum campo informado para atualização");
-        }
-
-        const { nome } = categoria;
-
-        // Verificar se categoria existe
-        const [categoriaExistente] = await pool.query(
-            `SELECT id FROM categorias WHERE id = ?`,
-            [id]
-        );
-
-        if (categoriaExistente.length === 0) {
-            throw new Error("Categoria não encontrada");
-        }
-
-        // Validar duplicidade de nome (se vier no update)
-        if (nome) {
-            const [nomeExistente] = await pool.query(
-                `SELECT id FROM categorias WHERE nome = ? AND id != ?`,
-                [nome, id]
-            );
-
-            if (nomeExistente.length > 0) {
-                throw new Error("Já existe categoria com este nome");
-            }
-        }
-
         await pool.query(
             `UPDATE categorias SET ? WHERE id = ?`,
             [categoria, id]
         );
 
-        return { id, ...categoria };
+        return await this.buscarPorId(id);
     }
 
     // Excluir categoria
     static async excluir(id) {
-
-        if (!Number.isInteger(Number(id)) || Number(id) <= 0) {
-            throw new Error("ID inválido");
-        }
-
-        // Verificar se existe
-        const [categoria] = await pool.query(
-            `SELECT id FROM categorias WHERE id = ?`,
-            [id]
-        );
-
-        if (categoria.length === 0) {
-            throw new Error("Categoria não encontrada");
-        }
-
-        // Verificar se está sendo usada (equipamentos)
-        const [uso] = await pool.query(
-            `SELECT id FROM equipamentos WHERE categoria_id = ? LIMIT 1`,
-            [id]
-        );
-
-        if (uso.length > 0) {
-            throw new Error("Categoria não pode ser excluída pois está em uso");
-        }
-
-        await pool.query(
+        const [result] = await pool.query(
             `DELETE FROM categorias WHERE id = ?`,
             [id]
         );
 
-        return { message: "Categoria excluída com sucesso" };
+        return result.affectedRows > 0;
     }
 
     // Atualizar status da categoria
     static async atualizarStatus(id, status) {
-
-        if (!Number.isInteger(Number(id)) || Number(id) <= 0) {
-            throw new Error("ID inválido");
-        }
-
-        const statusValidos = ["ATIVO", "INATIVO"];
-
-        if (!statusValidos.includes(status)) {
-            throw new Error("Status inválido");
-        }
-
         const [result] = await pool.query(
             `UPDATE categorias SET status = ? WHERE id = ?`,
             [status, id]
         );
 
         if (result.affectedRows === 0) {
-            throw new Error("Categoria não encontrada");
+            return null;
         }
 
-        return { id, status };
+        return await this.buscarPorId(id);
     }
 }
 

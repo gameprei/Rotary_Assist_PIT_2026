@@ -1,5 +1,4 @@
 import pool from "../config/database.js";
-import ApiResponse from "../utils/ApiResponse.js";
 
 class BeneficiarioModel {
   
@@ -91,13 +90,11 @@ class BeneficiarioModel {
       ]
     );
 
-    return ApiResponse.success(
-      {
-        id: result.insertId,
-        nome,
-        cpf,
-      }
-    );
+    return {
+      id: result.insertId,
+      nome,
+      cpf,
+    };
   }
 
   // Atualizar beneficiário

@@ -3,6 +3,8 @@ import cors from "cors";
 import dotenv from "dotenv";
 import BeneficiarioRoutes from "./routes/BeneficiarioRoutes.js";
 import MembrosRoutes from "./routes/MembroRoutes.js"
+import ApiResponse from "./utils/ApiResponse.js";
+import AppError from "./utils/AppError.js";
 
 dotenv.config();
 const PORT = process.env.PORT || 3000;
@@ -21,11 +23,11 @@ app.use("/api", (await import("./routes/EmprestimoRoutes.js")).default);
 app.use("/api", (await import("./routes/MotivosdebaixaRoutes.js")).default);
 
 app.get("/", (req, res) => {
-  res.json({ message: "API Rotary rodadando" });
+  res.json(ApiResponse.success({ service: "API Rotary" }, "API Rotary rodando"));
 });
 
 app.use((req, res) => {
-  res.status(404).json({ message: "Endpoint não encontrado" });
+  res.status(404).json(ApiResponse.error("Endpoint não encontrado"));
 });
 
 app.listen(PORT, () => {
@@ -34,11 +36,14 @@ app.listen(PORT, () => {
 
 // Middleware de tratamento de erros
 app.use((err, req, res, next) => {
-    const statusCode = err.statusCode || 500;
+  if (err instanceof AppError) {
+    return res
+      .status(err.statusCode)
+      .json(ApiResponse.error(err.message, err.details));
+  }
 
-    res.status(statusCode).json({
-        error: err.message
-    });
+  console.error(err);
+  return res.status(500).json(ApiResponse.error("Erro interno do servidor"));
 });
 
 export default app;

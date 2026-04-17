@@ -1,104 +1,70 @@
-import CategoriaModel from "../models/CategoriaModel.js";
+import CategoriaService from "../services/CategoriaService.js";
+import ApiResponse from "../utils/ApiResponse.js";
 
 class CategoriaController {
     // Listar todas as categorias
-    static async listarTodos(req, res) {
+    static async listarTodos(req, res, next) {
         try {
-            let categorias;
-            categorias = await CategoriaModel.listarTodos();
-            res.json(categorias);
+            const categorias = await CategoriaService.listarTodos();
+            return res.json(ApiResponse.success(categorias, "Categorias listadas com sucesso"));
         } catch (error) {
-            res.status(500).json({ error: error.message });
+            next(error);
         }
     }
 
     // Buscar categoria por termo (nome || id)
-    static async buscarPorTermo(req, res) {
+    static async buscarPorTermo(req, res, next) {
         try {
             const { termo } = req.params;
-            const categorias = await CategoriaModel.buscarPorTermo(termo);
-            if (categorias.length === 0) {
-                return res.status(404).json({ message: "Categoria não encontrada" });
-            }
-            res.json(categorias);
+            const categorias = await CategoriaService.buscarPorTermo(termo);
+            return res.json(ApiResponse.success(categorias, "Busca de categorias realizada com sucesso"));
         } catch (error) {
-            res.status(500).json({ error: error.message });
+            next(error);
         }
     }
 
     // Cadastrar nova categoria
-    static async cadastrar(req, res) {
+    static async cadastrar(req, res, next) {
         try {
-            const { nome, tipo, descricao, status } = req.body;
-            if (!nome || !tipo || !descricao) {
-                return res.status(400).json({ message: "Todos os campos são obrigatórios" });
-            }
-
-            if (status && !["ATIVO", "INATIVO"].includes(status)) {
-                return res.status(400).json({ message: "Status inválido" });
-            }
-
-            const novaCategoria = await CategoriaModel.cadastrar({ nome, tipo, descricao, status });
-            res.status(201).json(novaCategoria);
+            const novaCategoria = await CategoriaService.cadastrar(req.body);
+            return res.status(201).json(ApiResponse.success(novaCategoria, "Categoria cadastrada com sucesso"));
         } catch (error) {
-            res.status(500).json({ error: error.message });
+            next(error);
         }
     }
 
     // Atualizar categoria
-    static async atualizar(req, res) {
+    static async atualizar(req, res, next) {
         try {
             const { id } = req.params;
-            const { nome, descricao, status } = req.body;
-            if (!nome || !descricao) {
-                return res.status(400).json({ message: "Todos os campos são obrigatórios" });
-            }
-
-            if (status && !["ATIVO", "INATIVO"].includes(status)) {
-                return res.status(400).json({ message: "Status inválido" });
-            }
-
-            const categoriaAtualizada = await CategoriaModel.atualizar(id, { nome, descricao, status });
-            res.json(categoriaAtualizada);
+            const categoriaAtualizada = await CategoriaService.atualizar(id, req.body);
+            return res.json(ApiResponse.success(categoriaAtualizada, "Categoria atualizada com sucesso"));
         } catch (error) {
-            res.status(500).json({ error: error.message });
+            next(error);
         }
     }
 
     // Excluir categoria
-    static async excluir(req, res) {
+    static async excluir(req, res, next) {
         try {
             const { id } = req.params;
-            const resultado = await CategoriaModel.excluir(id);
-            res.json(resultado);
+            const resultado = await CategoriaService.excluir(id);
+            return res.json(ApiResponse.success(resultado, "Categoria excluída com sucesso"));
         } catch (error) {
-            res.status(500).json({ error: error.message });
+            next(error);
         }
     }
 
     // Atualizar status da categoria
-    static async atualizarStatus(req, res) {
+    static async atualizarStatus(req, res, next) {
         try {
             const { id } = req.params;
             const { status } = req.body;
-
-            if (!status) {
-                return res.status(400).json({ message: "Status é obrigatório" });
-            }
-
-            if (!["ATIVO", "INATIVO"].includes(status)) {
-                return res.status(400).json({ message: "Status inválido" });
-            }
-
-            const resultado = await CategoriaModel.atualizarStatus(id, status);
-
-            res.json({
-                message: "Status da categoria atualizado com sucesso",
-                categoria: resultado
-            });
+            const resultado = await CategoriaService.atualizarStatus(id, status);
+            return res.json(ApiResponse.success(resultado, "Status de categoria atualizado com sucesso"));
 
         } catch (error) {
-            res.status(500).json({ error: error.message });
+            next(error);
         }
     }
 }

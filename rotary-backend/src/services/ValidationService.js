@@ -61,6 +61,19 @@ class ValidationService {
       throw new AppError(message, 400);
     }
   }
+
+  static validarIdPositivo(id, nomeCampo = "ID") {
+    const numero = Number(id);
+    if (!Number.isInteger(numero) || numero <= 0) {
+      throw new AppError(`${nomeCampo} inválido`, 400);
+    }
+  }
+
+  static validarEnum(valor, valoresPermitidos, message = "Valor inválido") {
+    if (!valoresPermitidos.includes(valor)) {
+      throw new AppError(message, 400);
+    }
+  }
 }
 
 export default ValidationService;

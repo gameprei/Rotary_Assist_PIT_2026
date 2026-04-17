@@ -59,9 +59,9 @@ class BeneficiarioService {
     }
 
     static async atualizar(cpfAntigo, data) {
+
         ValidationService.validarBody(data, "Corpo da requisição vazio");
         ValidationService.validarCPF(cpfAntigo, "CPF da URL inválido");
-
         ValidationService.validarCPF(data.cpf, "Novo CPF inválido");
         ValidationService.validarRg(data.rg);
         ValidationService.validarUF(data.uf);

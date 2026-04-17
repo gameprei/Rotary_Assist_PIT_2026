@@ -6,6 +6,14 @@ class ApiResponse {
             data
         };
     }
+
+    static error(message = "Erro interno do servidor", details = null) {
+        return {
+            status: "error",
+            message,
+            details,
+        };
+    }
 }
 
 export default ApiResponse;
