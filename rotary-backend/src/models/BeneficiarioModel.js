@@ -1,4 +1,5 @@
 import pool from "../config/database.js";
+import ApiResponse from "../utils/ApiResponse.js";
 
 class BeneficiarioModel {
   // Listar todos os beneficiários
@@ -19,6 +20,32 @@ class BeneficiarioModel {
     const likeTermo = `%${termo}%`;
     const [rows] = await pool.query(query, [likeTermo, likeTermo, likeTermo]);
     return rows;
+  }
+
+  static async buscarPorCpf(cpf) {
+    const [rows] = await pool.query(
+      "SELECT * FROM beneficiarios WHERE cpf = ? LIMIT 1",
+      [cpf]
+    );
+
+    return rows[0] || null;
+  }
+
+  static async validarCpfDuplicado(cpf, cpfIgnorado = null) {
+    if (cpfIgnorado) {
+      const [rows] = await pool.query(
+        "SELECT cpf FROM beneficiarios WHERE cpf = ? AND cpf <> ? LIMIT 1",
+        [cpf, cpfIgnorado]
+      );
+      return rows.length > 0;
+    }
+
+    const [rows] = await pool.query(
+      "SELECT cpf FROM beneficiarios WHERE cpf = ? LIMIT 1",
+      [cpf]
+    );
+
+    return rows.length > 0;
   }
 
   // Cadastrar novo beneficiário
@@ -63,45 +90,33 @@ class BeneficiarioModel {
       ]
     );
 
-    return {
-      id: result.insertId,
-      nome,
-      cpf,
-      rg,
-      data_nascimento,
-      telefone,
-      email,
-      endereco,
-      bairro,
-      cidade,
-      uf,
-      cep,
-      contato_emergencia,
-      telefone_emergencia,
-      necessidade_especifica,
-    };
+    return ApiResponse.success(
+      {
+        id: result.insertId,
+        nome,
+        cpf,
+      }
+    );
   }
 
   // Atualizar beneficiário
   static async atualizar(cpfAntigo, beneficiario) {
     if (!beneficiario || Object.keys(beneficiario).length === 0) {
-    throw new Error("Nenhum dado fornecido para atualização");
-  }
-    const cpfParaBusca = beneficiario.cpf && beneficiario.cpf !== cpfAntigo 
-      ? cpfAntigo 
-      : beneficiario.cpf || cpfAntigo;
+      throw new Error("Nenhum dado fornecido para atualização");
+    }
     
-      const [result] = await pool.query(
-    `UPDATE beneficiarios SET ? WHERE cpf = ?`,
-    [beneficiario, cpfAntigo]
-  );
+    const [result] = await pool.query(
+      `UPDATE beneficiarios SET ? WHERE cpf = ?`,
+      [beneficiario, cpfAntigo]
+    );
   
-  if (result.affectedRows === 0) {
-    return null;
+    if (result.affectedRows === 0) {
+      return null;
+    }
+
+    const cpfAtual = beneficiario.cpf || cpfAntigo;
+    return await this.buscarPorCpf(cpfAtual);
   }
-  
-  return { ...beneficiario };
-}
 
   // Deletar beneficiário
   static async excluir(cpf) {
