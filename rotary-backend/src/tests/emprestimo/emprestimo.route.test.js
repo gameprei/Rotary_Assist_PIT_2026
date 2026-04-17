@@ -1,6 +1,6 @@
 import request from "supertest";
-import app from "../app.js";
-import "./setup.js";
+import app from "../../app.js";
+import "../setup.js";
 
 describe("POST /api/emprestimos", () => {
 

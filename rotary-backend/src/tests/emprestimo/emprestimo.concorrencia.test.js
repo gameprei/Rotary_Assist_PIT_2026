@@ -1,5 +1,5 @@
-import EmprestimoModel from "../models/EmprestimoModel.js";
-import "./setup.js";
+import EmprestimoModel from "../../models/EmprestimoModel.js";
+import "../setup.js";
 
 describe("Concorrência de empréstimos", () => {
 

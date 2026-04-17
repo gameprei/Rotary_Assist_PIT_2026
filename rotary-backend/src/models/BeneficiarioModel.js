@@ -2,6 +2,7 @@ import pool from "../config/database.js";
 import ApiResponse from "../utils/ApiResponse.js";
 
 class BeneficiarioModel {
+  
   // Listar todos os beneficiários
   static async listarTodos() {
     const [rows] = await pool.query(
@@ -60,13 +61,13 @@ class BeneficiarioModel {
       endereco,
       bairro,
       cidade,
-      uf, 
+      uf,
       cep,
       contato_emergencia,
       telefone_emergencia,
       necessidade_especifica,
     } = beneficiario;
-    
+
     const [result] = await pool.query(
       `INSERT INTO beneficiarios 
         (nome, cpf, rg, data_nascimento, telefone, email, endereco, bairro, cidade, uf, cep, 
@@ -104,12 +105,12 @@ class BeneficiarioModel {
     if (!beneficiario || Object.keys(beneficiario).length === 0) {
       throw new Error("Nenhum dado fornecido para atualização");
     }
-    
+
     const [result] = await pool.query(
       `UPDATE beneficiarios SET ? WHERE cpf = ?`,
       [beneficiario, cpfAntigo]
     );
-  
+
     if (result.affectedRows === 0) {
       return null;
     }

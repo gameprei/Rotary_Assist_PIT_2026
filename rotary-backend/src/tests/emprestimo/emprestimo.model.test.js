@@ -1,6 +1,6 @@
-import EmprestimoModel from "../models/EmprestimoModel.js";
-import pool from "../config/database.js";
-import "./setup.js";
+import EmprestimoModel from "../../models/EmprestimoModel.js";
+import pool from "../../config/database.js";
+import "../setup.js";
 
 describe("EmprestimoModel - Registro de empréstimos", () => {
 

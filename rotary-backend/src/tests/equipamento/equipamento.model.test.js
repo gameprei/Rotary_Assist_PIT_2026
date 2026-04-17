@@ -1,6 +1,5 @@
-import EquipamentoModel from "../models/EquipamentoModel.js";
-import pool from "../config/database.js";
-import "./setup.js";
+import EquipamentoModel from "../../models/EquipamentoModel.js";
+import "../setup.js";
 
 describe("EquipamentoModel - Cadastro de equipamentos", () => {
 

@@ -23,7 +23,7 @@ class BeneficiarioController {
     }
   }
 
-  // Cadastrar novo beneficiário  PADRÃO REFATORADO COM RESPOSTA NORMALIZADA
+  // Cadastrar novo beneficiário 
   static async cadastrar(req, res, next) {
     try {
       const beneficiario = await BeneficiarioService.cadastrar(req.body);
