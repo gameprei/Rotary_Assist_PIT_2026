@@ -20,7 +20,8 @@ describe("POST /api/equipamentos", () => {
             });
 
         expect(response.status).toBe(201);
-        expect(response.body).toHaveProperty("id");
+        expect(response.body).toHaveProperty("status", "success");
+        expect(response.body).toHaveProperty("data.id");
 
     });
 
@@ -33,7 +34,8 @@ describe("POST /api/equipamentos", () => {
             });
 
         expect(response.status).toBe(400);
-        expect(response.body).toHaveProperty("error");
+        expect(response.body).toHaveProperty("status", "error");
+        expect(response.body).toHaveProperty("message");
 
     });
 
@@ -58,8 +60,9 @@ describe("POST /api/equipamentos", () => {
             .post("/api/equipamentos")
             .send(equipamento);
 
-        expect(response.status).toBe(400);
-        expect(response.body).toHaveProperty("error");
+        expect(response.status).toBe(409);
+        expect(response.body).toHaveProperty("status", "error");
+        expect(response.body).toHaveProperty("message");
 
     });
 
@@ -79,6 +82,7 @@ describe("POST /api/equipamentos", () => {
             });
 
         expect(response.status).toBe(400);
+        expect(response.body).toHaveProperty("status", "error");
 
     });
 
@@ -99,10 +103,10 @@ describe("POST /api/equipamentos", () => {
                     data_aquisicao: "2024-01-01"
                 });
 
-            const id = novo.body.id;
+            const equipamentoId = novo.body.data.id;
 
             const response = await request(app)
-                .put(`/api/equipamentos/${id}`)
+                .put(`/api/equipamentos/${equipamentoId}`)
                 .send({
                     nome: "Muleta Atualizada",
                     descricao: "Atualizado",
@@ -115,7 +119,8 @@ describe("POST /api/equipamentos", () => {
                 });
 
             expect(response.status).toBe(200);
-            expect(response.body.nome).toBe("Muleta Atualizada");
+            expect(response.body).toHaveProperty("status", "success");
+            expect(response.body.data.nome).toBe("Muleta Atualizada");
 
         });
 
@@ -127,7 +132,8 @@ describe("POST /api/equipamentos", () => {
                     nome: "Teste"
                 });
 
-            expect(response.status).toBe(400);
+            expect(response.status).toBe(404);
+            expect(response.body).toHaveProperty("status", "error");
 
         });
 

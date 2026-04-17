@@ -1,202 +1,77 @@
-import EquipamentoModel from "../models/EquipamentoModel.js";
+import EquipamentoService from "../services/EquipamentoService.js";
+import ApiResponse from "../utils/ApiResponse.js";
 
 class EquipamentoController {
 
   // Listar todos os equipamentos
-  static async listarTodos(req, res) {
+  static async listarTodos(req, res, next) {
     try {
       const { termo } = req.query;
-      let equipamentos;
-
-      if (termo) {
-        equipamentos = await EquipamentoModel.buscarPorTermo(termo);
-      } else {
-        equipamentos = await EquipamentoModel.listarTodos();
-      }
-
-      res.json(equipamentos);
-
+      const equipamentos = await EquipamentoService.listarTodos(termo);
+      return res.json(ApiResponse.success(equipamentos, "Equipamentos listados com sucesso"));
     } catch (error) {
-      console.error("Erro ao listar equipamentos:", error);
-      res.status(500).json({ message: "Erro ao listar equipamentos" });
+      next(error);
     }
   }
 
   // Buscar equipamento por termo (nome ou patrimônio)
-  static async buscarPorTermo(req, res) {
+  static async buscarPorTermo(req, res, next) {
     try {
       const { termo } = req.params;
-
-      const equipamentos = await EquipamentoModel.buscarPorTermo(termo);
-
-      if (equipamentos.length === 0) {
-        return res.status(404).json({ message: "Equipamento não encontrado" });
-      }
-
-      res.json(equipamentos);
-
+      const equipamentos = await EquipamentoService.buscarPorTermo(termo);
+      return res.json(ApiResponse.success(equipamentos, "Busca de equipamentos realizada com sucesso"));
     } catch (error) {
-      console.error("Erro ao buscar equipamento:", error);
-      res.status(500).json({ message: "Erro ao buscar equipamento" });
+      next(error);
     }
   }
 
   // Cadastrar novo equipamento
-  static async cadastrar(req, res) {
+  static async cadastrar(req, res, next) {
     try {
-
-      const {
-        nome,
-        descricao,
-        patrimonio,
-        numero_serie,
-        categoria_id,
-        fornecedor_id,
-        estado_conservacao,
-        data_aquisicao
-      } = req.body;
-
-      // Validação básica da requisição
-      if (
-        !nome ||
-        !patrimonio ||
-        !categoria_id ||
-        !estado_conservacao ||
-        !data_aquisicao
-      ) {
-        return res.status(400).json({
-          error: "Campos obrigatórios ausentes"
-        });
-      }
-
-      const novoEquipamento = await EquipamentoModel.cadastrar({
-        nome,
-        descricao,
-        patrimonio,
-        numero_serie,
-        categoria_id,
-        fornecedor_id,
-        estado_conservacao,
-        data_aquisicao
-      });
-
-      return res.status(201).json(novoEquipamento);
-
+      const novoEquipamento = await EquipamentoService.cadastrar(req.body);
+      return res.status(201).json(
+        ApiResponse.success(novoEquipamento, "Equipamento cadastrado com sucesso")
+      );
     } catch (error) {
-
-      // Erros de regra de negócio vindos do Model
-      if (error instanceof Error) {
-        return res.status(400).json({ error: error.message });
-      }
-      // Erro inesperado
-      return res.status(500).json({
-        error: "Erro interno ao cadastrar equipamento"
-      });
+      next(error);
     }
   }
 
   // Atualizar equipamento
-  static async atualizar(req, res) {
+  static async atualizar(req, res, next) {
     try {
-
-      const id = Number(req.params.id);
-
-      const {
-        nome,
-        descricao,
-        patrimonio,
-        numero_serie,
-        categoria_id,
-        fornecedor_id,
-        estado_conservacao,
-        data_aquisicao
-      } = req.body;
-
-      // Verificar se o corpo da requisição está vazio
-      if (!req.body || Object.keys(req.body).length === 0) {
-        return res.status(400).json({
-          error: "Corpo da requisição vazio"
-        });
-      }
-
-      const equipamentoAtualizado = await EquipamentoModel.atualizar(id, {
-        nome,
-        descricao,
-        patrimonio,
-        numero_serie,
-        categoria_id,
-        fornecedor_id,
-        estado_conservacao,
-        data_aquisicao
-      });
-
-      return res.status(200).json(equipamentoAtualizado);
-
+      const { id } = req.params;
+      const equipamentoAtualizado = await EquipamentoService.atualizar(id, req.body);
+      return res.status(200).json(
+        ApiResponse.success(equipamentoAtualizado, "Equipamento atualizado com sucesso")
+      );
     } catch (error) {
-
-      // Erros de regra de negócio vindos do Model
-      if (error instanceof Error) {
-        return res.status(400).json({ error: error.message });
-      }
-
-      // Erro inesperado
-      return res.status(500).json({
-        error: "Erro interno ao atualizar equipamento"
-      });
-
+      next(error);
     }
   }
 
   // Excluir equipamento
-  static async excluir(req, res) {
+  static async excluir(req, res, next) {
     try {
-
       const { id } = req.params;
-
-      const resultado = await EquipamentoModel.excluir(id);
-
-      if (resultado.affectedRows === 0) {
-        return res.status(404).json({ message: "Equipamento não encontrado" });
-      }
-
-      res.json({ message: "Equipamento excluído com sucesso" });
-
+      const resultado = await EquipamentoService.excluir(id);
+      return res.json(ApiResponse.success(resultado, "Equipamento excluído com sucesso"));
     } catch (error) {
-
-      if (error instanceof Error) {
-        return res.status(400).json({ message: error.message });
-      }
-
-      console.error("Erro ao excluir equipamento:", error);
-      res.status(500).json({ message: "Erro ao excluir equipamento" });
-
+      next(error);
     }
   }
 
   // Atualizar status do equipamento
-  static async atualizarStatus(req, res) {
+  static async atualizarStatus(req, res, next) {
     try {
-
       const { id } = req.params;
       const { status } = req.body;
-
-      if (!status) {
-        return res.status(400).json({ message: "Status é obrigatório" });
-      }
-
-      if (!["DISPONIVEL", "EMPRESTADO", "MANUTENCAO", "BAIXADO"].includes(status)) {
-        return res.status(400).json({ message: "Status inválido!" });
-      }
-
-      const equipamentoAtualizado = await EquipamentoModel.atualizarStatus(id, status);
-
-      res.json(equipamentoAtualizado);
-
+      const equipamentoAtualizado = await EquipamentoService.atualizarStatus(id, status);
+      return res.json(
+        ApiResponse.success(equipamentoAtualizado, "Status do equipamento atualizado com sucesso")
+      );
     } catch (error) {
-
-      console.error("Erro ao atualizar status do equipamento:", error);
-      res.status(500).json({ message: "Erro ao atualizar status do equipamento" });
-
+      next(error);
     }
   }
 }

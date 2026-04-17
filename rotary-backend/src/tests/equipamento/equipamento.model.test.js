@@ -1,7 +1,7 @@
 import EquipamentoModel from "../../models/EquipamentoModel.js";
 import "../setup.js";
 
-describe("EquipamentoModel - Cadastro de equipamentos", () => {
+describe("EquipamentoModel", () => {
 
     const dadosBase = {
         nome: "Cadeira de Rodas Teste",
@@ -14,7 +14,34 @@ describe("EquipamentoModel - Cadastro de equipamentos", () => {
         data_aquisicao: "2024-01-01"
     };
 
-    test("deve cadastrar um equipamento válido", async () => {
+    test("deve listar equipamentos", async () => {
+
+        const resultado = await EquipamentoModel.listarTodos();
+
+        expect(Array.isArray(resultado)).toBe(true);
+        expect(resultado.length).toBeGreaterThan(0);
+
+    });
+
+    test("deve buscar por termo", async () => {
+
+        const resultado = await EquipamentoModel.buscarPorTermo("PAT001");
+
+        expect(Array.isArray(resultado)).toBe(true);
+        expect(resultado.length).toBeGreaterThan(0);
+
+    });
+
+    test("deve buscar por id", async () => {
+
+        const resultado = await EquipamentoModel.buscarPorId(1);
+
+        expect(resultado).not.toBeNull();
+        expect(resultado.id).toBe(1);
+
+    });
+
+    test("deve cadastrar equipamento", async () => {
 
         const resultado = await EquipamentoModel.cadastrar(dadosBase);
 
@@ -23,72 +50,102 @@ describe("EquipamentoModel - Cadastro de equipamentos", () => {
 
     });
 
-    test("não deve permitir patrimônio duplicado", async () => {
+    test("deve validar patrimonio duplicado", async () => {
 
-        const equipamento = {
+        await EquipamentoModel.cadastrar({
             ...dadosBase,
             patrimonio: "PAT-DUP-1",
-            numero_serie: "SER-DUP-1"
-        };
+            numero_serie: "SER-DUP-1",
+        });
 
-        await EquipamentoModel.cadastrar(equipamento);
+        const duplicado = await EquipamentoModel.existePatrimonioDuplicado("PAT-DUP-1");
 
-        await expect(
-            EquipamentoModel.cadastrar(equipamento)
-        ).rejects.toThrow("Já existe um equipamento cadastrado com este patrimônio");
+        expect(duplicado).toBe(true);
 
     });
 
-    test("não deve permitir número de série duplicado", async () => {
+    test("deve validar numero de serie duplicado", async () => {
 
-        const equipamento1 = {
+        await EquipamentoModel.cadastrar({
             ...dadosBase,
             patrimonio: "PAT-3001",
             numero_serie: "SER-DUP-2"
-        };
+        });
 
-        const equipamento2 = {
-            ...dadosBase,
-            patrimonio: "PAT-3002",
-            numero_serie: "SER-DUP-2"
-        };
+        const duplicado = await EquipamentoModel.existeNumeroSerieDuplicado("SER-DUP-2");
 
-        await EquipamentoModel.cadastrar(equipamento1);
-
-        await expect(
-            EquipamentoModel.cadastrar(equipamento2)
-        ).rejects.toThrow("Número de série já cadastrado");
+        expect(duplicado).toBe(true);
 
     });
 
-    test("não deve cadastrar equipamento com categoria inexistente", async () => {
+    test("deve atualizar equipamento", async () => {
 
-        const dados = {
+        const cadastrado = await EquipamentoModel.cadastrar({
             ...dadosBase,
-            patrimonio: "PAT-4001",
-            numero_serie: "SER-4001",
-            categoria_id: 999
-        };
+            patrimonio: "PAT-UPD-1",
+            numero_serie: "SER-UPD-1",
+        });
 
-        await expect(
-            EquipamentoModel.cadastrar(dados)
-        ).rejects.toThrow("Categoria não encontrada ou inativa");
+        const atualizado = await EquipamentoModel.atualizar(cadastrado.id, {
+            nome: "Equipamento Atualizado",
+        });
+
+        expect(atualizado).not.toBeNull();
+        expect(atualizado.nome).toBe("Equipamento Atualizado");
 
     });
 
-    test("não deve cadastrar equipamento com fornecedor inexistente", async () => {
+    test("deve retornar null ao atualizar status de equipamento inexistente", async () => {
 
-        const dados = {
-            ...dadosBase,
-            patrimonio: "PAT-5001",
-            numero_serie: "SER-5001",
-            fornecedor_id: 999
-        };
+        const resultado = await EquipamentoModel.atualizarStatus(9999, "DISPONIVEL");
 
-        await expect(
-            EquipamentoModel.cadastrar(dados)
-        ).rejects.toThrow("Fornecedor não encontrado ou inativo");
+        expect(resultado).toBeNull();
 
     });
 
+    test("deve excluir equipamento existente", async () => {
+
+        const cadastrado = await EquipamentoModel.cadastrar({
+            ...dadosBase,
+            patrimonio: "PAT-DEL-1",
+            numero_serie: "SER-DEL-1",
+        });
+
+        const excluiu = await EquipamentoModel.excluir(cadastrado.id);
+
+        expect(excluiu).toBe(true);
+
+    });
+
+    test("deve validar categoria ativa", async () => {
+
+        const categoriaAtiva = await EquipamentoModel.categoriaAtivaExiste(1);
+
+        expect(categoriaAtiva).toBe(true);
+
+    });
+
+    test("deve validar fornecedor ativo", async () => {
+
+        const fornecedorAtivo = await EquipamentoModel.fornecedorAtivoExiste(1);
+
+        expect(fornecedorAtivo).toBe(true);
+
+    });
+
+    test("deve identificar equipamento emprestado", async () => {
+
+        const emprestado = await EquipamentoModel.equipamentoEmprestado(1);
+
+        expect(emprestado).toBe(false);
+
+    });
+
+    test("deve retornar false ao excluir equipamento inexistente", async () => {
+
+        const excluiu = await EquipamentoModel.excluir(9999);
+
+        expect(excluiu).toBe(false);
+
+    });
 });
